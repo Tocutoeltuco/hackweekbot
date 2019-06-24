@@ -32,7 +32,13 @@ class Client(commands.Bot):
 			config["prefix"] = result["prefix"]
 			config["cogs"] = result["cogs"].split(",")
 
+			if guild_id == self.config["testserver"]:
+				config["cogs"].append("cogs.testcog")
+
 			return config
+
+		if guild_id == self.config["testserver"]:
+			config["cogs"].append("cogs.testcog")
 		return self.default_config
 
 	async def check_prefix(self, bot, message):

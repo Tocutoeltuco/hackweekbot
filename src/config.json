@@ -2,6 +2,7 @@
 	"token": "",
 	"cogs": [
 	],
+	"testserver": 0,
 	"max_cache": 500,
 	"web_socket": ["127.0.0.1", 5654],
 	"database": ["127.0.0.1", 3306, "user", "pass", "database"],
