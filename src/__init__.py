@@ -1,3 +1,4 @@
+import threading
 import asyncio
 import objects
 import json
@@ -5,6 +6,13 @@ import json
 with open("./config.json", "r") as file:
 	config = json.loads(file.read())
 
-loop = asyncio.get_event_loop()
-client = objects.client.Client(objects, config, loop=loop)
+clientloop = asyncio.get_event_loop()
+serverloop = asyncio.new_event_loop()
+
+client = objects.client.Client(objects, config, loop=clientloop)
+server = objects.server.Server(objects, client, config, loop=serverloop)
+client.server = server
+
+serverloop.create_task(server.main())
+threading.Thread(target=serverloop.run_forever).start()
 client.run(config["token"])

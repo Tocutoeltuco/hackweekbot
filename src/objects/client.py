@@ -21,6 +21,7 @@ class Client(commands.Bot):
 
 		for cog in config["cogs"]:
 			self.load_extension(cog)
+		self.load_extension("cogs.testcog") # allow the bot to load this cog so we can easily debug the bot
 
 	@cache.cache
 	async def get_guild_config(self, guild_id):
