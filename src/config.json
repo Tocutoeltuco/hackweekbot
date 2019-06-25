@@ -1,8 +1,8 @@
 {
-	"token": "",
+	"token": "NTkyODIyNzk1OTkwMzM1NzIx.XRFA5w.80MVN2UiHcg3NPNd0_5g_94_MZs",
 	"cogs": [
 	],
-	"testserver": 0,
+	"testserver": 592104443151908864,
 	"max_cache": 500,
 	"web_socket": ["127.0.0.1", 5654],
 	"database": ["127.0.0.1", 3306, "user", "pass", "database"],
