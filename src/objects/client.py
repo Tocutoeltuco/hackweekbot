@@ -1,3 +1,4 @@
+import copy
 import asyncio
 from discord.ext import commands
 from .cache import Cache
@@ -11,7 +12,7 @@ class Client(commands.Bot):
 		self.objects = objects
 		self.config = config
 		self.default_config = {
-			"prefix": "!",
+			"prefix": ".",
 			"cogs": config["cogs"]
 		}
 		cache.maxsize = config["max_cache"]
@@ -38,8 +39,17 @@ class Client(commands.Bot):
 			return config
 
 		if guild_id == self.config["testserver"]:
+			config = copy.deepcopy(self.default_config)
 			config["cogs"].append("cogs.testcog")
-		return self.default_config
+			return config
+		return copy.deepcopy(self.default_config)
+
+	async def command_prefix(self, bot, msg): # self and bot are == since this is a subclass
+		config = await self.get_guild_config(msg.guild.id)
+		return config["prefix"]
 
 	async def check_prefix(self, bot, message):
 		return (await self.get_guild_config(message.guild))["prefix"]
+
+	async def on_command_error(self, ctx, exception):
+		pass
