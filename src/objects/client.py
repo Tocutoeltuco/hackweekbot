@@ -31,9 +31,12 @@ class Client(commands.Bot):
 		if result is not None:
 			config = {}
 			config["prefix"] = result["prefix"]
-			config["cogs"] = result["cogs"].split(",")
+			config["cogs"] = []
+			for cog, order in self.config["cogs_order"].items():
+				if (result["cogs"] & (1 << order)) and (cog in self.config["cogs"]):
+					config["cogs"].append(cog)
 
-			if guild_id == self.config["testserver"]:
+			if (guild_id == self.config["testserver"]) and ("cogs.testcog" not in config["cogs"]):
 				config["cogs"].append("cogs.testcog")
 
 			return config

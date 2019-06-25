@@ -1,6 +1,9 @@
 {
 	"token": "",
 	"token": "",
+	"cogs_order": {
+		"cogs.testcog": 0
+	},
 	"cogs": [
 	],
 	"testserver": 592104443151908864,
