@@ -9,19 +9,15 @@ class Server:
 		self.config = config
 
 	async def send(self, writer, packet):
-		data = json.dumps(packet).encode()
-		length = len(data)
-
-		writer.write(bytes([(length >> 8) & 255, length & 255]) + data)
+		writer.write(json.dumps(packet).encode() + b"\x01")
 		await writer.drain()
 
 	async def recv(self, reader):
-		length = await reader.read(2)
-		return json.loads(await reader.read(length[0] << 8 + length[1]))
+		return json.loads((await reader.readuntil(b"\x01"))[:-1])
 
 	async def parse_packet(self, packet):
 		if packet["type"] == "update_guild":
-			self.client.cache.remove("get_guild_config", (self.client, packet["guild"]))
+			self.client.cache.remove("get_guild_config", (self.client, int(packet["guild"])))
 
 	async def handle_client(self, reader, writer):
 		if writer.get_extra_info("peername")[0] not in self.config["remote_web_socket"]:
