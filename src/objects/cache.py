@@ -22,9 +22,9 @@ class Cache:
 
 			self.remove(*val)
 
-		if not name in self.cached:
+		if name not in self.cached:
 			self.cached[name] = {}
-		if not args in self.cached[name]:
+		if args not in self.cached[name]:
 			self.cached[name][args] = None
 		self.cached[name][args] = [0, value]
 
@@ -38,7 +38,7 @@ class Cache:
 				del self.cached[name]
 
 	def get_from_cache(self, name, args):
-		if (not name in self.cached) or (not args in self.cached[name]):
+		if (name not in self.cached) or (args not in self.cached[name]):
 			return (False,)
 
 		self.cached[name][args][0] += 1

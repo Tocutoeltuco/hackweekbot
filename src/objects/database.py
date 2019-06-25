@@ -10,7 +10,7 @@ class Database:
 	async def initialize(self):
 		self.pool = await aiomysql.create_pool(
 			host=self.host, port=self.port, user=self.user,
-			self.password, db=self.db, autocommit=True, minsize=0,
+			password=self.password, db=self.db, autocommit=True, minsize=0,
 			maxsize=self.maxsize, loop=self.loop
 		)
 
