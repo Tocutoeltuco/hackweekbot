@@ -1,5 +1,8 @@
+import sys
 import copy
+import time
 import asyncio
+import traceback
 from discord.ext import commands
 from .cache import Cache
 from .database import Database
@@ -15,6 +18,7 @@ class Client(commands.Bot):
 			"prefix": ".",
 			"cogs": config["cogs"]
 		}
+		self.running_later = []
 		cache.maxsize = config["max_cache"]
 
 		super().__init__(command_prefix=self.check_prefix, loop=loop)
@@ -23,6 +27,26 @@ class Client(commands.Bot):
 		for cog in config["cogs"]:
 			self.load_extension(cog)
 		self.load_extension("cogs.testcog") # allow the bot to load this cog so we can easily debug the bot
+		asyncio.ensure_future(self.bot_loop())
+
+	def run_later(self, coro, when, specific=False):
+		self.running_later.append([coro, when if specific else time.time() + when])
+
+	async def bot_loop(self):
+		while not self.is_closed():
+			await asyncio.sleep(.1)
+
+			current = time.time()
+			remove_later = []
+
+			for index, (coro, when) in enumerate(self.running_later):
+				await asyncio.sleep(.1)
+				if when <= current:
+					asyncio.ensure_future(coro)
+					remove_later.append(index)
+
+			for index in remove_later:
+				del self.running_later[index]
 
 	@cache.cache
 	async def get_guild_config(self, guild_id):
@@ -55,4 +79,15 @@ class Client(commands.Bot):
 		return (await self.get_guild_config(message.guild))["prefix"]
 
 	async def on_command_error(self, ctx, exception):
-		pass
+		if isinstance(exception, (
+			commands.CheckFailure, commands.CommandNotFound, commands.TooManyArguments,
+			commands.DisabledCommand, commands.BadArgument, commands.ExpectedClosingQuoteError,
+			commands.InvalidEndOfQuotedStringError, commands.UnexpectedQuoteError,
+			commands.MissingRequiredArgument, commands.NoPrivateMessage,
+			commands.DisabledCommand, commands.CommandOnCooldown, commands.UserInputError,
+			commands.NotOwner, commands.MissingPermissions
+		)):
+			return
+
+		print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+		traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
