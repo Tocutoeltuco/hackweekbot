@@ -31,7 +31,7 @@ class Server:
 		while True:
 			await asyncio.sleep(.1)
 			try:
-				packet = await parse_packet(await self.recv(reader))
+				packet = await self.parse_packet(await self.recv(reader))
 
 				if packet is not None:
 					await self.send(writer, packet)
