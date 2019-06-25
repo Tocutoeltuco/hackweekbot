@@ -21,3 +21,36 @@ def command_check():
 		return False
 
 	return commands.check(predicate)
+
+def is_mod_check(in_channel=False):
+	"""A checker to tell whether the player is a moderator or not."""
+	async def predicate(ctx):
+		if (
+			ctx.author.guild_permissions.administrator or
+			ctx.author.guild_permissions.manage_messages or ctx.author.guild_permissions.manage_channels or
+			ctx.author.guild_permissions.kick_members or ctx.author.guild_permissions.ban_members
+		):
+			return True
+		if in_channel:
+			channel_permissions = ctx.author.permissions_in(ctx.channel)
+			return channel_permissions.manage_messages or channel_permissions.manage_channels
+		return False
+
+	return commands.check(predicate)
+
+def integer(arg):
+	try:
+		return int(arg)
+	except ValueError:
+		pass
+
+	try:
+		return int(round(float(arg)))
+	except ValueError:
+		raise commands.BadArgument("Argument is not a number.")
+
+def double(arg):
+	try:
+		return float(arg)
+	except ValueError:
+		raise commands.BadArgument("")
