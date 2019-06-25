@@ -20,16 +20,17 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 
 	@commands.Cog.listener()
 	async def on_member_join(self, member):
-		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `guild`=%s AND `sanctioned`=%s AND `type`=%s", str(member.guild.id), str(member.id), "mute", fetch="one")
-		if sanction is None:
-			return
+		if utils.cog_check(self.bot, member.guild):
+			sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `guild`=%s AND `sanctioned`=%s AND `type`=%s", str(member.guild.id), str(member.id), "mute", fetch="one")
+			if sanction is None:
+				return
 
-		muted_role = await self.muted_role(member.guild)
-		if muted_role is None:
-			return
+			muted_role = await self.muted_role(member.guild)
+			if muted_role is None:
+				return
 
-		await member.add_roles(muted_role, reason="Trying to evade a mute!")
-		self.bot.run_later(self.remove_sanction(sanction), result["ending"], specific=True)
+			await member.add_roles(muted_role, reason="Trying to evade a mute!")
+			self.bot.run_later(self.remove_sanction(sanction), result["ending"], specific=True)
 
 	async def muted_role(self, guild):
 		client_roles = [role.id for role in guild.me.roles]
