@@ -24,6 +24,10 @@ class Server:
 			self.client.cache.remove("get_guild_config", (self.client, packet["guild"]))
 
 	async def handle_client(self, reader, writer):
+		if writer.get_extra_info("peername")[0] not in self.config["remote_web_socket"]:
+			writer.close() # The IP is not whitelisted!
+			return
+
 		while True:
 			await asyncio.sleep(.1)
 			try:
@@ -38,4 +42,4 @@ class Server:
 				return
 
 	async def main(self):
-		await asyncio.start_server(self.handle_client, self.config["web_socket"][0], self.config["web_socket"][1], loop=self.loop)
+		await asyncio.start_server(self.handle_client, *self.config["web_socket"], loop=self.loop)
