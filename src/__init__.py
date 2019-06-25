@@ -2,6 +2,7 @@ import threading
 import asyncio
 import objects
 import json
+import os
 
 with open("./config.json", "r") as file:
 	config = json.loads(file.read())
@@ -15,4 +16,4 @@ client.server = server
 
 serverloop.create_task(server.main())
 threading.Thread(target=serverloop.run_forever).start()
-client.run(config["token"])
+client.run(os.getenv("DISCO_TOKEN"))
