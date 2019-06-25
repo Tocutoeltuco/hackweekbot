@@ -1,8 +1,10 @@
 {
 	"cogs_order": {
-		"cogs.testcog": 0
+		"cogs.testcog": 0,
+		"cogs.modcmds": 1
 	},
 	"cogs": [
+		"cogs.modcmds"
 	],
 	"testserver": 592104443151908864,
 	"max_cache": 500,
