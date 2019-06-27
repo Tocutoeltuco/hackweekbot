@@ -8,7 +8,7 @@ import discord
 utils.set_cog_name("cogs.api")
 
 class ApiCog(commands.Cog, name="Api Cog"):
-	"""Cog where all call to api's are made."""
+	"""Cog where all call to APIs are made."""
 
 	def __init__(self, session):
 		self.session = session
@@ -17,6 +17,11 @@ class ApiCog(commands.Cog, name="Api Cog"):
 	@utils.command_check()
 	@commands.bot_has_permissions(send_messages=True)
 	async def urban(self, ctx, *args):
+		"""{{Shows the definition of an expression.}}
+		[[]]
+		(([word(s)]))
+		++.urban bruh++
+		"""
 		url = "http://urbanscraper.herokuapp.com"
 		title = "Urban Search: `{}`"
 		description = '\n'.join([
@@ -49,6 +54,11 @@ class ApiCog(commands.Cog, name="Api Cog"):
 	@utils.command_check()
 	@commands.bot_has_permissions(send_messages=True)
 	async def dict(self, ctx, *args):
+		"""{{Shows the definition of a word.}}
+		[[]]
+		(([word]))
+		++.urban postpone++
+		"""
 		data = {
 			'word': ' '.join(args)
 		}
@@ -74,6 +84,11 @@ class ApiCog(commands.Cog, name="Api Cog"):
 	@utils.command_check()
 	@commands.bot_has_permissions(send_messages=True)
 	async def anime(self, ctx, *args):
+		"""{{Shows informations about an anime.}}
+		[[]]
+		(([anime's name]))
+		++.anime dororo++
+		"""
 		params = {
 			'filter[text]': ' '.join(args)
 		}
@@ -119,6 +134,11 @@ class ApiCog(commands.Cog, name="Api Cog"):
 	@utils.command_check()
 	@commands.bot_has_permissions(send_messages=True)
 	async def country(self, ctx, *args):
+		"""{{Shows informations about a country..}}
+		[[]]
+		(([country's name]))
+		++.country belgium++
+		"""
 		try:
 			async with self.session.get(f'https://restcountries.eu/rest/v2/name/{" ".join(args)}') as resp:
 				resp.raise_for_status()
