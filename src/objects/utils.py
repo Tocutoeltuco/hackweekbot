@@ -25,19 +25,10 @@ def command_check():
 
 	return commands.check(predicate)
 
-def is_mod_check(in_channel=False):
-	"""A checker to tell whether the player is a moderator or not."""
+def permission(permission):
+	"""A checker that tells if the given permission is granted in the given context."""
 	async def predicate(ctx):
-		if (
-			ctx.author.guild_permissions.administrator or
-			ctx.author.guild_permissions.manage_messages or ctx.author.guild_permissions.manage_channels or
-			ctx.author.guild_permissions.kick_members or ctx.author.guild_permissions.ban_members
-		):
-			return True
-		if in_channel:
-			channel_permissions = ctx.author.permissions_in(ctx.channel)
-			return channel_permissions.manage_messages or channel_permissions.manage_channels
-		return False
+		return await ctx.bot.has_permissions(ctx.author, ctx.channel, permission)
 
 	return commands.check(predicate)
 
