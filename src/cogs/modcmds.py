@@ -1,7 +1,6 @@
 import objects.utils as utils
 import discord
 import time
-from discord.abc import Snowflake
 from discord.ext import commands
 
 utils.set_cog_name("cogs.modcmds")
@@ -12,7 +11,7 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 
 	@commands.Cog.listener()
 	async def on_ready(self):
-		sanctions = await self.bot.db.query("SELECT * FROM `sanctions`", time.time(), fetch="all")
+		sanctions = await self.bot.db.query("SELECT * FROM `sanctions`", fetch="all")
 
 		if sanctions is not None:
 			for sanction in sanctions:
@@ -69,19 +68,27 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 
 	@commands.command(name="del")
 	@utils.command_check()
-	@utils.is_mod_check(in_channel=True)
-	@commands.bot_has_permissions(manage_messages=True)
+	@utils.permission("access_del_cmd")
+	@commands.bot_has_permissions(manage_messages=True, send_messages=True)
 	async def delete(self, ctx, msg1: utils.integer, msg2: utils.integer):
 		"""Deletes many messages in a specific channel."""
 		await ctx.message.delete()
+		msglist, pointer = [], 0
 		async for message in ctx.channel.history(limit=None, after=discord.Object(msg1 - 1), before=discord.Object(msg2 + 1)):
-			await message.delete()
+			msglist.append(message)
+			pointer += 1
+
+			if pointer == 100:
+				await ctx.channel.delete_messages(msglist)
+				msglist = []
+				pointer = 0
+		await ctx.channel.delete_messages(msglist)
 
 	@commands.command()
 	@utils.command_check()
-	@utils.is_mod_check()
-	@commands.bot_has_permissions(ban_members=True)
-	async def ban(self, ctx, member: discord.Member, hours: utils.double, reason=None):
+	@utils.permission("access_ban_cmd")
+	@commands.bot_has_permissions(ban_members=True, send_messages=True)
+	async def ban(self, ctx, member: commands.MemberConverter, hours: utils.double, reason=None):
 		if member == ctx.message.author:
 			await ctx.send("You can't ban yourself!")
 			return
@@ -112,9 +119,9 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 
 	@commands.command()
 	@utils.command_check()
-	@utils.is_mod_check()
-	@commands.bot_has_permissions(kick_members=True)
-	async def kick(self, ctx, member: discord.Member, reason=None):
+	@utils.permission("access_kick_cmd")
+	@commands.bot_has_permissions(kick_members=True, send_messages=True)
+	async def kick(self, ctx, member: commands.MemberConverter, reason=None):
 		if member == ctx.message.author:
 			await ctx.send("You can't kick yourself!")
 			return
@@ -129,9 +136,9 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 
 	@commands.command()
 	@utils.command_check()
-	@utils.is_mod_check()
-	@commands.bot_has_permissions(manage_roles=True)
-	async def mute(self, ctx, member: discord.Member, hours: utils.double, reason=None):
+	@utils.permission("access_mute_cmd")
+	@commands.bot_has_permissions(manage_roles=True, send_messages=True)
+	async def mute(self, ctx, member: commands.MemberConverter, hours: utils.double, reason=None):
 		muted_role = await self.muted_role(ctx.guild)
 		if muted_role:
 			if member == ctx.message.author:
@@ -167,7 +174,8 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 
 	@commands.command()
 	@utils.command_check()
-	@utils.is_mod_check()
+	@utils.permission("access_sancinfo_cmd")
+	@commands.bot_has_permissions(send_messages=True)
 	async def sancinfo(self, ctx, sanc_id: utils.integer):
 		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanction_id`=%s AND `guild`=%s", sanc_id, str(ctx.guild.id), fetch="one")
 
@@ -182,7 +190,8 @@ Ending in: **{int((sanction['ending'] - time.time()) / 60)} minutes**""")
 
 	@commands.command()
 	@utils.command_check()
-	@utils.is_mod_check()
+	@utils.permission("access_remsanc_cmd")
+	@commands.bot_has_permissions(send_messages=True)
 	async def remsanc(self, ctx, sanc_id: utils.integer):
 		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanction_id`=%s AND `guild`=%s", sanc_id, str(ctx.guild.id), fetch="one")
 
