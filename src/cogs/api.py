@@ -176,5 +176,5 @@ class ApiCog(commands.Cog, name="Api Cog"):
 
 def setup(bot):
 	timeout = aiohttp.ClientTimeout(total=3)
-	session = aiohttp.ClientSession(timeout=timeout)
+	session = aiohttp.ClientSession(timeout=timeout, loop=bot.loop)
 	bot.add_cog(ApiCog(session))
