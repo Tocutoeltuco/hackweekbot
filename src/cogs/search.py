@@ -1,3 +1,4 @@
+import asyncio
 import objects.utils as utils
 import discord
 from discord.ext import commands
@@ -68,7 +69,13 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		++.discrim++
 		"""
 		discrim = ctx.author.discriminator
-		members = [m.display_name for m in ctx.guild.members if m.discriminator==discrim and m!=ctx.author]
+		members = []
+		for guild in ctx.bot.guilds:
+			for m in ctx.guild.members:
+				if m.discriminator==discrim and m!=ctx.author:
+					members.append(m.display_name)
+				await asyncio.sleep(10**-5) # can be heavy with lot of guilds
+
 		if len(members)==0:
 			return await ctx.send("You have an unique discriminator on this server.")
 		await ctx.send('\n'.join(members))
