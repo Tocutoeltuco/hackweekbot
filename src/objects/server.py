@@ -174,10 +174,11 @@ class Server:
 
 				if guild is not None:
 					print(guild_id, "is not none")
+					member = None
 					try:
-						member = await guild.fetch_member(user_id)
+						member = guild.get_member(user_id)
 					except:
-						continue
+						pass
 
 					if member is not None:
 						if await self.client.has_permission(member, no_channel, "edit_guild_config"):
@@ -216,6 +217,7 @@ class Server:
 				else:
 					await self.send(writer, {"result": "success"})
 			except KeyError:
+				traceback.print_exc()
 				try:
 					await self.send(writer, {"result": "error"})
 				except:
@@ -223,6 +225,7 @@ class Server:
 					writer.close()
 					return
 			except ValueError:
+				traceback.print_exc()
 				try:
 					await self.send(writer, {"result": "error"})
 				except:
@@ -230,6 +233,7 @@ class Server:
 					writer.close()
 					return
 			except:
+				traceback.print_exc()
 				print(peername, "closed 4")
 				writer.close()
 				return
