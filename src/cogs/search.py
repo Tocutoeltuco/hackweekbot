@@ -32,21 +32,26 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		role = ' '.join(role).lower()
 
 		if role=='owner':
-			return await ctx.send(ctx.guild.owner.name)
+			message = await ctx.send(ctx.guild.owner.name)
+			self.bot.db(ctx.message.id, message)
+			return
 
 		for r in ctx.guild.roles:
 			if r.name.lower()==role:
 				role = r
 				break
 		else:
-			return await ctx.send("Error: I haven't found the role on this server.")
+			message = await ctx.send("Error: I haven't found the role on this server.")
+			self.bot.set_answer(ctx.message.id, message)
+			return
 
 		members = [f"{self.get_emoji(m.status.value)} {m.display_name}" for m in ctx.guild.members if role in m.roles]
 
 		embed = discord.Embed()
 		embed.title = f"Members with the role `{role}`:"
 		embed.description = "\n".join(members)
-		await ctx.send(embed=embed)
+		message = await ctx.send(embed=embed)
+		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -59,7 +64,9 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		++mods patrik++
 		"""
 		if len(args)<2:
-			return await ctx.send('Invalid syntax for the command.')
+			message = await ctx.send('Invalid syntax for the command.')
+			self.bot.set_answer(ctx.message.id, message)
+			return
 
 		role = ' '.join(args[:-1]).lower()
 		name = args[-1].lower()
@@ -69,7 +76,9 @@ class SearchCog(commands.Cog, name="Search Cog"):
 				role = r
 				break
 		else:
-			return await ctx.send("Error: I haven't found the role on this server.")
+			message = await ctx.send("Error: I haven't found the role on this server.")
+			self.bot.set_answer(ctx.message.id, message)
+			return
 
 		members = []
 		for m in ctx.guild.members:
@@ -81,7 +90,8 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		embed = discord.Embed()
 		embed.title = f"Members with the role `{role}`:"
 		embed.description = "\n".join(members)
-		await ctx.send(embed=embed)
+		message = await ctx.send(embed=embed)
+		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -102,12 +112,15 @@ class SearchCog(commands.Cog, name="Search Cog"):
 				await asyncio.sleep(10**-5) # can be heavy with lot of guilds
 
 		if len(members)==0:
-			return await ctx.send("You have an unique discriminator on this server.")
+			message = await ctx.send("You have an unique discriminator on this server.")
+			self.bot.set_answer(ctx.message.id, message)
+			return
 
 		embed = discord.Embed()
 		embed.title = f"Members with the discriminator `{discrim}`:"
 		embed.description = "\n".join(members)
-		await ctx.send(embed=embed)
+		message = await ctx.send(embed=embed)
+		self.bot.set_answer(ctx.message.id, message)
 
 def setup(bot):
 	bot.add_cog(SearchCog(bot))

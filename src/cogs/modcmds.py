@@ -103,13 +103,15 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		++Tocutoeltuco#0018 1 spamming too much++
 		"""
 		if member == ctx.message.author:
-			await ctx.send("You can't ban yourself!")
+			message = await ctx.send("You can't ban yourself!")
+			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		sanction = await self.bot.db.query("SELECT `sanction_id` FROM `sanctions` WHERE `guild`=%s AND `sanctioned`=%s", str(ctx.guild.id), str(member.id), fetch="one")
 		if sanction is not None:
 			config = await self.bot.get_guild_config(ctx.guild.id)
-			await ctx.send(f"**{member.name}** is already sanctioned. You could better do **{config['prefix']}remsanc {sanction['sanction_id']}** first.")
+			message = await ctx.send(f"**{member.name}** is already sanctioned. You could better do **{config['prefix']}remsanc {sanction['sanction_id']}** first.")
+			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		await ctx.message.delete()
@@ -141,7 +143,8 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		++Tocutoeltuco#0018 1 spamming too much++
 		"""
 		if member == ctx.message.author:
-			await ctx.send("You can't kick yourself!")
+			message = await ctx.send("You can't kick yourself!")
+			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		await ctx.message.delete()
@@ -165,13 +168,15 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		muted_role = await self.muted_role(ctx.guild)
 		if muted_role:
 			if member == ctx.message.author:
-				await ctx.send("You can't mute yourself!")
+				message = await ctx.send("You can't mute yourself!")
+				self.bot.set_answer(ctx.message.id, message)
 				return
 
 			sanction = await self.bot.db.query("SELECT `sanction_id` FROM `sanctions` WHERE `guild`=%s AND `sanctioned`=%s", str(ctx.guild.id), str(member.id), fetch="one")
 			if sanction is not None:
 				config = await self.bot.get_guild_config(ctx.guild.id)
-				await ctx.send(f"**{member.name}** is already sanctioned. You could better do **{config['prefix']}remsanc {sanction['sanction_id']}** first.")
+				message = await ctx.send(f"**{member.name}** is already sanctioned. You could better do **{config['prefix']}remsanc {sanction['sanction_id']}** first.")
+				self.bot.set_answer(ctx.message.id, message)
 				return
 
 			await ctx.message.delete()
@@ -208,13 +213,15 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanction_id`=%s AND `guild`=%s", sanc_id, str(ctx.guild.id), fetch="one")
 
 		if sanction is None:
-			await ctx.send(f"There is no sanction matching the id **{sanc_id}**")
+			message = await ctx.send(f"There is no sanction matching the id **{sanc_id}**")
+			self.bot.set_answer(ctx.message.id, message)
 
 		else:
-			await ctx.send(f"""Sanction ID: **{sanc_id}**
+			message = await ctx.send(f"""Sanction ID: **{sanc_id}**
 Sanction type: **{sanction['type']}**
 Sanctioned user: **{sanction['sanctioned']}**
 Ending in: **{int((sanction['ending'] - time.time()) / 60)} minutes**""")
+			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -229,11 +236,13 @@ Ending in: **{int((sanction['ending'] - time.time()) / 60)} minutes**""")
 		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanction_id`=%s AND `guild`=%s", sanc_id, str(ctx.guild.id), fetch="one")
 
 		if sanction is None:
-			await ctx.send(f"There is no sanction matching the id **{sanc_id}**")
+			message = await ctx.send(f"There is no sanction matching the id **{sanc_id}**")
+			self.bot.set_answer(ctx.message.id, message)
 
 		else:
 			await self.remove_sanction(sanction)
-			await ctx.send("The sanction has been removed.")
+			message = await ctx.send("The sanction has been removed.")
+			self.bot.set_answer(ctx.message.id, message)
 
 def setup(bot):
 	bot.add_cog(ModerationCmds(bot))

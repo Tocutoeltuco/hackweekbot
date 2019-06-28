@@ -41,7 +41,9 @@ class ApiCog(commands.Cog, name="Api Cog"):
 			embed.description = "```Not Found```"
 			embed.color = 0xDC143C
 			embed.set_footer(text=url)
-			return await ctx.send(embed=embed)
+			message = await ctx.send(embed=embed)
+			self.bot.set_answer(ctx.message.id, message)
+			return
 
 		embed = discord.Embed()
 		embed.title = title.format(result.get('term'))
@@ -49,7 +51,8 @@ class ApiCog(commands.Cog, name="Api Cog"):
 		embed.color = 0xE86222
 		embed.set_footer(text=url)
 
-		await ctx.send(embed=embed)
+		message = await ctx.send(embed=embed)
+		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -72,7 +75,9 @@ class ApiCog(commands.Cog, name="Api Cog"):
 				bs = BS(result.decode(), 'lxml')
 				definition = bs.html.body.worddefinition.definition.worddefinition.text # bruh
 		except aiohttp.client_exceptions.ClientResponseError:
-			return await ctx.send(embed=discord.Embed(title=f"Dictionary Search: `{' '.join(args)}`", description="```Not Found```", color=0xDC143C))
+			message = await ctx.send(embed=discord.Embed(title=f"Dictionary Search: `{' '.join(args)}`", description="```Not Found```", color=0xDC143C))
+			self.bot.set_answer(ctx.message.id, message)
+			return
 
 		embed = discord.Embed()
 		embed.title = f"Dictionary Search: `{data['word']}`"
@@ -80,7 +85,8 @@ class ApiCog(commands.Cog, name="Api Cog"):
 		embed.color = 0xE86222
 		embed.set_footer(text="http://services.aonaware.com/DictService")
 
-		await ctx.send(embed=embed)
+		message = await ctx.send(embed=embed)
+		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -113,7 +119,9 @@ class ApiCog(commands.Cog, name="Api Cog"):
 			embed.description = "```Not Found```"
 			embed.color = 0xDC143C
 			embed.set_footer(text="https://kitsu.io")
-			return await ctx.send(embed=embed)
+			message = await ctx.send(embed=embed)
+			self.bot.set_answer(ctx.message.id, message)
+			return
 
 		synopsis = anime['synopsis']
 		if len(synopsis)>=300:
@@ -131,7 +139,8 @@ class ApiCog(commands.Cog, name="Api Cog"):
 		embed.color = 0xE86222
 		embed.set_footer(text="https://kitsu.io")
 
-		await ctx.send(embed=embed)
+		message = await ctx.send(embed=embed)
+		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -157,7 +166,9 @@ class ApiCog(commands.Cog, name="Api Cog"):
 			embed.description = "```Not Found```"
 			embed.color = 0xDC143C
 			embed.set_footer(text="https://restcountries.eu/")
-			return await ctx.send(embed=embed)
+			message = await ctx.send(embed=embed)
+			self.bot.set_answer(ctx.message.id, message)
+			return
 
 		currencies = [f"{cur.get('name')} {cur.get('symbol')}" for cur in data.get('currencies')]
 		languages = [lang.get('name') for lang in data.get('languages')]
@@ -176,7 +187,8 @@ class ApiCog(commands.Cog, name="Api Cog"):
 		embed.color = 0xE86222
 		embed.set_footer(text="https://restcountries.eu/")
 
-		await ctx.send(embed=embed)
+		message = await ctx.send(embed=embed)
+		self.bot.set_answer(ctx.message.id, message)
 
 
 def setup(bot):

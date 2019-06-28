@@ -118,18 +118,20 @@ class ActivityCog(commands.Cog, name="Activity Cog"):
 			for index, row in enumerate(result):
 				text += f"\n`%02d` <@{row['user_id']}>: **level `{self.exp_to_level(row['total'])[0]}`**, **`{row['experience']}` experience points**" % (index + 1)
 
-			await ctx.send(embed=discord.Embed(
+			message = await ctx.send(embed=discord.Embed(
 				title=f"Top `{len(result)}` experienced users{' of this week' if week else ''}",
 				description=text,
 				colour=0xffff99
 			))
+			self.bot.set_answer(ctx.message.id, message)
 
 		else:
-			await ctx.send(embed=discord.Embed(
+			message = await ctx.send(embed=discord.Embed(
 				title="Error!",
 				description="Sadly, there is no activity information of this server :(",
 				colour=0xff6666
 			))
+			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -146,7 +148,7 @@ class ActivityCog(commands.Cog, name="Activity Cog"):
 
 		if row is not None:
 			level, remaining = self.exp_to_level(row['total'])
-			await ctx.send(embed=discord.Embed(
+			message = await ctx.send(embed=discord.Embed(
 				title=f"Activity information of **{member.name}**",
 				description=f"""Level: **`{level}`**
 Level experience: **`{remaining}`**/**`{self.level_max_exp(level)}`**
@@ -154,9 +156,10 @@ Experience earned this week: **`{row['this_week']}`**
 Total experience: **`{row['total']}`**""",
 				colour=0xffff99
 			))
+			self.bot.set_answer(ctx.message.id, message)
 
 		else:
-			await ctx.send(embed=discord.Embed(
+			message = await ctx.send(embed=discord.Embed(
 				title=f"Activity information of **{member.name}**",
 				description=f"""Level: **`0`**
 Level experience: **`0`**/**`{self.level_max_exp(0)}`**
@@ -164,6 +167,7 @@ Experience earned this week: **`0`**
 Total experience: **`0`**""",
 				colour=0xffff99
 			))
+			self.bot.set_answer(ctx.message.id, message)
 
 def setup(bot):
 	bot.add_cog(ActivityCog(bot))

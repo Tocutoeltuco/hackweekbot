@@ -173,10 +173,12 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 					await message.delete()
 
 			await self.bot.db.query("DELETE FROM `custom_run_later` WHERE `discord_id`=%s", str(ctx.guild.id), fetch=None)
-			await ctx.send(f"<@{ctx.author.id}> You can now start a new giveaway!")
+			message = await ctx.send(f"<@{ctx.author.id}> You can now start a new giveaway!")
+			self.bot.set_answer(ctx.message.id, message)
 
 		else:
-			await ctx.send(f"<@{ctx.author.id}> There is no running giveaway right now.")
+			message = await ctx.send(f"<@{ctx.author.id}> There is no running giveaway right now.")
+			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -190,18 +192,21 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 		"""
 		if await self.bot.db.query("SELECT * FROM `custom_run_later` WHERE `discord_id`=%s", str(ctx.author.id), fetch="one") is not None:
 			config = await self.bot.get_guild_config(ctx.guild.id)
-			await ctx.send(f"<@{ctx.author.id}> You have an already running reminder! Stop it by writing **{config['prefix']}stopreminder** first.")
+			message = await ctx.send(f"<@{ctx.author.id}> You have an already running reminder! Stop it by writing **{config['prefix']}stopreminder** first.")
+			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		if when < 180:
-			await ctx.send(f"<@{ctx.author.id}> You must set a time quantity that is greater than 3 minutes!")
+			message = await ctx.send(f"<@{ctx.author.id}> You must set a time quantity that is greater than 3 minutes!")
+			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		await self.bot.db.query(
 			"INSERT INTO `custom_run_later` (`discord_id`, `run_at`, `type`, `info`) VALUES (%s, %s, %s, %s)",
 			str(ctx.author.id), time.time() + when, "reminder", f"{ctx.guild.id};{ctx.channel.id};{message}", fetch=None
 		)
-		await ctx.send(f"<@{ctx.author.id}> Alright. I will remind you!")
+		message = await ctx.send(f"<@{ctx.author.id}> Alright. I will remind you!")
+		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -214,7 +219,8 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 		++++
 		"""
 		await self.bot.db.query("DELETE FROM `custom_run_later` WHERE `discord_id`=%s", str(ctx.author.id), fetch=None)
-		await ctx.send(f"<@{ctx.author.id}> You can now add a new reminder!")
+		message = await ctx.send(f"<@{ctx.author.id}> You can now add a new reminder!")
+		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -236,6 +242,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 			self.bot.set_answer(ctx.message.id, message)
 			return
 
+		message = None
 		if msg is None:
 			msg = channel
 			channel = ctx.channel
@@ -250,9 +257,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 				self.bot.set_answer(ctx.message.id, message)
 				return
 
-			message = None
 			channel = ctx.guild.get_channel(int(channel))
-
 			if channel is not None:
 				try:
 					message = await channel.fetch_message(int(msg))
@@ -297,7 +302,8 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 			try:
 				color = int(color)
 			except:
-				await ctx.send("Invalid color! Valid ones: `16777113`, `#ffff99`, `ffff99`")
+				message = await ctx.send("Invalid color! Valid ones: `16777113`, `#ffff99`, `ffff99`")
+				self.bot.set_answer(ctx.message.id, message)
 				return
 
 		color &= 0xffffff
@@ -306,7 +312,8 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 		embed.set_author(name=f"#{hex_color.upper()} <{color}>")
 		embed.set_image(url=f"https://www.colorhexa.com/{hex_color}.png")
 
-		await ctx.send(embed=embed)
+		message = await ctx.send(embed=embed)
+		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -415,9 +422,11 @@ print("Hello world!")\\`\\`\\`++
 				for embed in embeds:
 					await ctx.send(embed=embed)
 			else:
-				await ctx.send("Invalid language!")
+				message = await ctx.send("Invalid language!")
+				self.bot.set_answer(ctx.message.id, message)
 		else:
-			await ctx.send("Invalid command structure!")
+			message = await ctx.send("Invalid command structure!")
+			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()
@@ -465,7 +474,8 @@ print("Hello world!")\\`\\`\\`++
 
 		else:
 			config = await self.bot.get_guild_config(ctx.guild.id)
-			await ctx.send(f"Invalid syntax. Correct one: `{config['prefix']}translate es Hello. This is a testing phrase` or `{config['prefix']}translate en-es Hello. This is a testing phrase`")
+			message = await ctx.send(f"Invalid syntax. Correct one: `{config['prefix']}translate es Hello. This is a testing phrase` or `{config['prefix']}translate en-es Hello. This is a testing phrase`")
+			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		querystring = urllib.parse.urlencode({"client": "gtx", "sl": source, "tl": target, "dt": "t", "q": text})
@@ -474,12 +484,13 @@ print("Hello world!")\\`\\`\\`++
 		new_source = result[2]
 		result_text = "".join(map(lambda item: item[0], result[0]))
 
-		await ctx.send(embed=discord.Embed(
+		message = await ctx.send(embed=discord.Embed(
 			title=":nerd: Quick translation",
 			colour=0x7dc5b6,
 			description=f"From language: **{new_source.upper()}**```\n{text}```To language: **{target.upper()}**```\n{result_text}```",
 			timestamp=datetime.datetime.utcnow()
 		))
+		self.bot.set_answer(ctx.message.id, message)
 
 def setup(bot):
 	timeout = aiohttp.ClientTimeout(total=3)
