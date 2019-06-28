@@ -8,10 +8,12 @@ from .cache import Cache
 from .database import Database
 
 cache = Cache()
+msgcache = Cache()
 
 class Client(commands.Bot):
 	def __init__(self, objects, config, loop=None):
 		self.cache = cache
+		self.msgcache = msgcache
 		self.objects = objects
 		self.config = config
 		self.default_config = {
@@ -302,6 +304,7 @@ class Client(commands.Bot):
 		}
 		self.running_later = []
 		cache.maxsize = config["max_cache"]
+		msgcache.maxsize = config["max_msg_cache"]
 
 		super().__init__(command_prefix=self.check_prefix, loop=loop)
 		self.db = Database(*config["database"], config["db_pool_max_conn"], loop=self.loop)
@@ -355,6 +358,31 @@ class Client(commands.Bot):
 
 			for index in reversed(remove_later):
 				del self.running_later[index]
+
+	async def get_answer(self, msg_id):
+		result = self.msgcache.get_from_cache("answers", msg_id)
+
+		if result[0]:
+			answer = result[1]
+			guild = self.get_guild(answer.guild.id)
+
+			if guild is not None:
+				try:
+					channel = await guild.fetch_channel(answer.channel.id)
+					return await channel.fetch_message(answer.id)
+				except:
+					pass
+
+			self.msgcache.remove("answers", msg_id)
+			return None
+		return None
+
+	def del_answer(self, msg_id):
+		self.msgcache.remove("answers", msg_id)
+
+	def set_answer(self, msg_id, answer):
+		self.msgcache.remove("answers", msg_id)
+		self.msgcache.append("answers", msg_id, answer)
 
 	async def _get_guild_config(self, guild_id):
 		result = await self.db.query("SELECT * FROM `guild_configurations` WHERE `guild_id`=%s", str(guild_id), fetch="one")

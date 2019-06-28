@@ -232,7 +232,8 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 		else:
 			channel, msg = splitted[0], None
 		if not channel.isdigit():
-			await ctx.send(f"Invalid syntax! Correct one: `{config['prefix']}quote <channelid->msgid`")
+			message = await ctx.send(f"Invalid syntax! Correct one: `{config['prefix']}quote <channelid->msgid`")
+			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		if msg is None:
@@ -245,7 +246,8 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 
 		else:
 			if not msg.isdigit():
-				await ctx.send(f"Invalid syntax! Correct one: `{config['prefix']}quote <channelid->msgid`")
+				message = await ctx.send(f"Invalid syntax! Correct one: `{config['prefix']}quote <channelid->msgid`")
+				self.bot.set_answer(ctx.message.id, message)
 				return
 
 			message = None
@@ -268,16 +270,16 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 				embed.set_author(name=message.author.name, icon_url=str(message.author.avatar_url))
 				embed.set_footer(text=f"In {channel.category.name + '.#' if channel.category is not None else '#'}{channel.name}")
 
-				await ctx.send(
-					content=f"_Quote from <@{ctx.author.id}> **{ctx.author.name}**_",
-					embed=embed, file=file, files=files
-				)
+				message = await ctx.send(content=f"_Quote from <@{ctx.author.id}> **{ctx.author.name}**_", embed=embed)
+				self.bot.set_answer(ctx.message.id, message)
 
 			else:
-				await ctx.send(f"Sadly, I can't quote that message. But there is the link: https://discordapp.com/channels/{ctx.guild.id}/{channel.id}/{message.id}")
+				message = await ctx.send(f"Sadly, I can't quote that message. But there is the link: https://discordapp.com/channels/{ctx.guild.id}/{channel.id}/{message.id}")
+				self.bot.set_answer(ctx.message.id, message)
 
 		else:
-			await ctx.send("Message not found.")
+			message = await ctx.send("Message not found.")
+			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
 	@utils.command_check()

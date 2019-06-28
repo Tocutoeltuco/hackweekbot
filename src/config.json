@@ -7,7 +7,8 @@
 		"cogs.simplecmds": 4,
 		"cogs.activity": 5,
 		"cogs.api": 6,
-		"cogs.search": 7
+		"cogs.search": 7,
+		"cogs.messagesedit": 8
 	},
 	"cogs": [
 		"cogs.modcmds",
@@ -16,10 +17,12 @@
 		"cogs.simplecmds",
 		"cogs.activity",
 		"cogs.api",
-		"cogs.search"
+		"cogs.search",
+		"cogs.messagesedit"
 	],
 	"testserver": 592104443151908864,
 	"max_cache": 500,
+	"max_msg_cache": 200,
 	"web_socket": ["127.0.0.1", 5654],
 	"web_socket_whitelist": ["127.0.0.1"],
 	"database": ["127.0.0.1", 3306, "chishiki", "topsecretpassword", "chishiki"],
