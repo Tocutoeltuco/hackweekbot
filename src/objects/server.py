@@ -188,7 +188,7 @@ class Server:
 	async def handle_client(self, reader, writer):
 		peername = writer.get_extra_info("peername")
 		print("New connection!", peername)
-		if peername[0] not in self.config["remote_web_socket"]:
+		if peername[0] not in self.config["web_socket_whitelist"]:
 			print(peername, "closed 1")
 			writer.close() # The IP is not whitelisted!
 			return
