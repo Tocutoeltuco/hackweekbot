@@ -186,7 +186,10 @@ class Server:
 		return {}
 
 	async def handle_client(self, reader, writer):
-		if writer.get_extra_info("peername")[0] not in self.config["remote_web_socket"]:
+		peername = writer.get_extra_info("peername")
+		print("New connection!", peername)
+		if peername[0] not in self.config["remote_web_socket"]:
+			print(peername, "closed 1")
 			writer.close() # The IP is not whitelisted!
 			return
 
@@ -207,13 +210,16 @@ class Server:
 				try:
 					await self.send(writer, {"result": "error"})
 				except:
+					print(peername, "closed 2")
 					return
 			except ValueError:
 				try:
 					await self.send(writer, {"result": "error"})
 				except:
+					print(peername, "closed 3")
 					return
 			except:
+				print(peername, "closed 4")
 				return
 
 	async def main(self):

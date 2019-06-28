@@ -449,13 +449,33 @@ class Client(commands.Bot):
 
 	async def on_command_error(self, ctx, exception):
 		if isinstance(exception, (
-			commands.CheckFailure, commands.CommandNotFound, commands.TooManyArguments,
-			commands.DisabledCommand, commands.BadArgument, commands.ExpectedClosingQuoteError,
+			commands.CheckFailure, commands.CommandNotFound,
+			commands.DisabledCommand, commands.ExpectedClosingQuoteError,
 			commands.InvalidEndOfQuotedStringError, commands.UnexpectedQuoteError,
-			commands.MissingRequiredArgument, commands.NoPrivateMessage,
-			commands.DisabledCommand, commands.CommandOnCooldown, commands.UserInputError,
-			commands.NotOwner, commands.MissingPermissions
+			commands.NoPrivateMessage, commands.DisabledCommand, commands.CommandOnCooldown,
+			commands.UserInputError, commands.NotOwner, commands.MissingPermissions
 		)):
+			return
+
+		elif isinstance(exception, commands.TooManyArguments):
+			prefix = await self.check_prefix(self, ctx.message)
+
+			message = await ctx.send(f"<@{ctx.author.id}> You provided too many arguments! Check **`{prefix}help {ctx.command.name}`**.")
+			self.set_answer(ctx.message.id, message)
+			return
+
+		elif isinstance(exception, commands.MissingRequiredArgument):
+			prefix = await self.check_prefix(self, ctx.message)
+
+			message = await ctx.send(f"<@{ctx.author.id}> You provided less arguments! Check **`{prefix}help {ctx.command.name}`**.")
+			self.set_answer(ctx.message.id, message)
+			return
+
+		elif isinstance(exception, commands.BadArgument):
+			prefix = await self.check_prefix(self, ctx.message)
+
+			message = await ctx.send(f"<@{ctx.author.id}> You provided a bad argument! Check **`{prefix}help {ctx.command.name}`**.")
+			self.set_answer(ctx.message.id, message)
 			return
 
 		print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
