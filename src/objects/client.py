@@ -118,6 +118,102 @@ class Client(commands.Bot):
 					"roles": []
 				},
 				"default": False
+			},
+			"access_top_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_level_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_remind_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_giveaway_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_meme_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_quote_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_color_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_exec_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
 			}
 		}
 		self.running_later = []
@@ -167,13 +263,13 @@ class Client(commands.Bot):
 			current = time.time()
 			remove_later = []
 
-			for index, (coro, when) in enumerate(self.running_later):
+			for index, (coro, when) in enumerate(self.running_later.copy()):
 				await asyncio.sleep(.1)
 				if when <= current:
 					asyncio.ensure_future(coro)
 					remove_later.append(index)
 
-			for index in remove_later:
+			for index in reversed(remove_later):
 				del self.running_later[index]
 
 	async def _get_guild_config(self, guild_id):
