@@ -155,6 +155,11 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_giveaway_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def stopgiveaway(self, ctx):
+		"""{{Stops the server's giveaway, if any.}}
+		[[]]
+		(())
+		++++
+		"""
 		result = await self.bot.db.query("SELECT `info` FROM `custom_run_later` WHERE `discord_id`=%s", str(ctx.guild.id), fetch="one")
 
 		if result is not None:
@@ -178,6 +183,11 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_remind_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def remind(self, ctx, when: utils.time, *, message: str):
+		"""{{Adds a reminder. Bot will remind you!}}
+		[[]]
+		(([when] [message]))
+		++1d1h1m1s take a shower u smell++
+		"""
 		if await self.bot.db.query("SELECT * FROM `custom_run_later` WHERE `discord_id`=%s", str(ctx.author.id), fetch="one") is not None:
 			config = await self.bot.get_guild_config(ctx.guild.id)
 			await ctx.send(f"<@{ctx.author.id}> You have an already running reminder! Stop it by writing **{config['prefix']}stopreminder** first.")
@@ -198,6 +208,11 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_remind_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def stopreminder(self, ctx):
+		"""{{Stops your reminder. Bot won't remind you.}}
+		[[]]
+		(())
+		++++
+		"""
 		await self.bot.db.query("DELETE FROM `custom_run_later` WHERE `discord_id`=%s", str(ctx.author.id), fetch=None)
 		await ctx.send(f"<@{ctx.author.id}> You can now add a new reminder!")
 
@@ -206,6 +221,11 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_quote_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def quote(self, ctx, info: str):
+		"""{{Quotes a message from this or the given channel}}
+		[[]]
+		(([<channelid->messageid]))
+		++592104443151908866-593978517948203008++
+		"""
 		splitted = info.split("-")[:2]
 		if len(splitted) == 2:
 			channel, msg = splitted
@@ -264,6 +284,11 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_color_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def color(self, ctx, color: str):
+		"""{{Shows a color}}
+		[[]]
+		(([color (hex or dec)]))
+		++#ffff99++
+		"""
 		try:
 			color = int("0x" + color.replace("#", ""), 16)
 		except:
@@ -286,6 +311,12 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_exec_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def exec(self, ctx, *, args: str):
+		"""{{Executes a piece of code with rextester}}
+		[[]]
+		(([block quote with the language and code]))
+		++\\`\\`\\`python
+print("Hello world!")\\`\\`\\`++
+		"""
 		languages = {
 			"c#": 1, "cs": 1,
 			"lua": 14,
@@ -391,6 +422,11 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_meme_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def meme(self, ctx):
+		"""{{Shows a random meme!}}
+		[[]]
+		(())
+		++++
+		"""
 		try:
 			async with self.session.get("https://meme-api.herokuapp.com/gimme") as response:
 				result = json.loads(await response.text())
@@ -411,6 +447,11 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_translate_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def translate(self, ctx, settings: str, *, text: str):
+		"""{{Translates a sentence}}
+		[[]]
+		(([<from_language->to_language] [text]))
+		++es-en Hola, ¿cómo estás?++
+		"""
 		settings = settings.lower()
 
 		if len(settings) == 2:

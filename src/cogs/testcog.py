@@ -12,11 +12,5 @@ class TestCog(commands.Cog, name="Testing Cog"):
 	async def on_ready(self):
 		print("The bot is ready!")
 
-	@commands.command()
-	@utils.command_check()
-	async def hi(self, ctx):
-		"""Simple testing command!"""
-		await ctx.send("Hello, user!")
-
 def setup(bot):
 	bot.add_cog(TestCog(bot))

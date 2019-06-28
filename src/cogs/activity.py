@@ -103,6 +103,11 @@ class ActivityCog(commands.Cog, name="Activity Cog"):
 	@utils.permission("access_top_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def top(self, ctx, week: bool=False):
+		"""{{Shows the experience leaderboard}}
+		[[]]
+		((<show week leaderboard?>))
+		++yes++
+		"""
 		result = await self.bot.db.query(
 			"SELECT `user_id`, `{0}` AS `experience`, `total` FROM `user_levels` WHERE `guild_id`=%s ORDER BY `{0}` DESC LIMIT 20".format("this_week" if week else "total"),
 			str(ctx.guild.id), fetch="all"
@@ -131,6 +136,11 @@ class ActivityCog(commands.Cog, name="Activity Cog"):
 	@utils.permission("access_level_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def level(self, ctx, member: commands.MemberConverter=None):
+		"""{{Shows the level of a user}}
+		[[]]
+		(([name/ping]))
+		++yes++
+		"""
 		member = member or ctx.author
 		row = await self.bot.db.query("SELECT `total`, `this_week` FROM `user_levels` WHERE `guild_id`=%s AND `user_id`=%s", str(ctx.guild.id), str(member.id), fetch="one")
 

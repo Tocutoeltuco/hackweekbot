@@ -71,8 +71,16 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 	@utils.permission("access_del_cmd")
 	@commands.bot_has_permissions(manage_messages=True, send_messages=True)
 	async def delete(self, ctx, msg1: utils.integer, msg2: utils.integer):
-		"""Deletes many messages in a specific channel."""
+		"""{{Deletes many messages in the current channel.}}
+		[[]]
+		(([msg1 id] [msg2 id]))
+		++593970514213601281 593970724260151306++
+		"""
 		await ctx.message.delete()
+
+		if msg1 > msg2:
+			msg1, msg2 = msg2, msg1
+
 		msglist, pointer = [], 0
 		async for message in ctx.channel.history(limit=None, after=discord.Object(msg1 - 1), before=discord.Object(msg2 + 1)):
 			msglist.append(message)
@@ -89,6 +97,11 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 	@utils.permission("access_ban_cmd")
 	@commands.bot_has_permissions(ban_members=True, send_messages=True)
 	async def ban(self, ctx, member: commands.MemberConverter, hours: utils.double, reason=None):
+		"""{{Bans a member from the server.}}
+		[[]]
+		(([ping/name] [hours] <reason>))
+		++Tocutoeltuco#0018 1 spamming too much++
+		"""
 		if member == ctx.message.author:
 			await ctx.send("You can't ban yourself!")
 			return
@@ -122,6 +135,11 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 	@utils.permission("access_kick_cmd")
 	@commands.bot_has_permissions(kick_members=True, send_messages=True)
 	async def kick(self, ctx, member: commands.MemberConverter, reason=None):
+		"""{{Kicks a member from the server.}}
+		[[]]
+		(([ping/name] [hours] <reason>))
+		++Tocutoeltuco#0018 1 spamming too much++
+		"""
 		if member == ctx.message.author:
 			await ctx.send("You can't kick yourself!")
 			return
@@ -139,6 +157,11 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 	@utils.permission("access_mute_cmd")
 	@commands.bot_has_permissions(manage_roles=True, send_messages=True)
 	async def mute(self, ctx, member: commands.MemberConverter, hours: utils.double, reason=None):
+		"""{{Mutes a member from the server.}}
+		[[]]
+		(([ping/name] [hours] <reason>))
+		++Tocutoeltuco#0018 1 spamming too much++
+		"""
 		muted_role = await self.muted_role(ctx.guild)
 		if muted_role:
 			if member == ctx.message.author:
@@ -177,6 +200,11 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 	@utils.permission("access_sancinfo_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def sancinfo(self, ctx, sanc_id: utils.integer):
+		"""{{Gets information about a user's sanction.}}
+		[[]]
+		(([ping/name]))
+		++Tocutoeltuco#0018++
+		"""
 		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanction_id`=%s AND `guild`=%s", sanc_id, str(ctx.guild.id), fetch="one")
 
 		if sanction is None:
@@ -193,6 +221,11 @@ Ending in: **{int((sanction['ending'] - time.time()) / 60)} minutes**""")
 	@utils.permission("access_remsanc_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def remsanc(self, ctx, sanc_id: utils.integer):
+		"""{{Removes a user's sanction.}}
+		[[]]
+		(([sanction id]))
+		++2++
+		"""
 		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanction_id`=%s AND `guild`=%s", sanc_id, str(ctx.guild.id), fetch="one")
 
 		if sanction is None:

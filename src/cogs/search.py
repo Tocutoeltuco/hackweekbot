@@ -21,12 +21,13 @@ class SearchCog(commands.Cog, name="Search Cog"):
 
 	@commands.command()
 	@utils.command_check()
+	@utils.permission("access_list_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def list(self, ctx, *role):
 		"""{{Find all users having a specified role.}}
 		[[Works with the owner's role too.]]
 		(([role's name]))
-		++.list owner++
+		++owner++
 		"""
 		role = ' '.join(role).lower()
 
@@ -49,12 +50,13 @@ class SearchCog(commands.Cog, name="Search Cog"):
 
 	@commands.command()
 	@utils.command_check()
+	@utils.permission("access_searchin_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def searchin(self, ctx, *args):
 		"""{{Find a user which have a specified role.}}
 		[[]]
 		(([role] [partial user's name]))
-		++.searchin mods patrik++
+		++mods patrik++
 		"""
 		if len(args)<2:
 			return await ctx.send('Invalid syntax for the command.')
@@ -83,12 +85,13 @@ class SearchCog(commands.Cog, name="Search Cog"):
 
 	@commands.command()
 	@utils.command_check()
+	@utils.permission("access_discrim_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def discrim(self, ctx):
 		"""{{Searches for an user who has the same discriminator as you.}}
 		[[I'm looking in all guilds I'm in.]]
 		(())
-		++.discrim++
+		++++
 		"""
 		discrim = ctx.author.discriminator
 		members = []

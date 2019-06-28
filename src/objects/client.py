@@ -165,7 +165,7 @@ class Client(commands.Bot):
 					"channels": [],
 					"roles": []
 				},
-				"default": True
+				"default": False
 			},
 			"access_meme_cmd": {
 				"granted": {
@@ -204,6 +204,90 @@ class Client(commands.Bot):
 				"default": True
 			},
 			"access_exec_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": False
+			},
+			"access_urban_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_dict_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_anime_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_country_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_list_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_searchin_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
+			},
+			"access_discrim_cmd": {
 				"granted": {
 					"big_roles": [],
 					"channels": [],
