@@ -1,13 +1,23 @@
 {
 	"cogs_order": {
-		"cogs.testcog": 0
+		"cogs.testcog": 0,
+		"cogs.modcmds": 1,
+		"cogs.statistics": 2,
+		"cogs.memberlogs": 3,
+		"cogs.simplecmds": 4,
+		"cogs.activity": 5
 	},
 	"cogs": [
+		"cogs.modcmds",
+		"cogs.statistics",
+		"cogs.memberlogs",
+		"cogs.simplecmds",
+		"cogs.activity"
 	],
 	"testserver": 592104443151908864,
 	"max_cache": 500,
 	"web_socket": ["127.0.0.1", 5654],
 	"web_socket_whitelist": ["127.0.0.1"],
-	"database": ["127.0.0.1", 3306, "user", "pass", "database"],
+	"database": ["127.0.0.1", 3306, "chishiki", "topsecretpassword", "chishiki"],
 	"db_pool_max_conn": 10
 }

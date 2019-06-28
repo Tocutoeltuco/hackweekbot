@@ -20,14 +20,15 @@ class Database:
 			await self.initialize()
 
 		async with self.pool.acquire() as connection:
-			async with connection.acquire() as cursor:
+			async with connection.cursor(aiomysql.DictCursor) as cursor:
 				await cursor.execute(query, args=(params if len(params) > 0 else None))
 
-				if fetch == "all":
-					result = await cursor.fetchall()
+				if fetch is not None:
+					if fetch == "all":
+						result = await cursor.fetchall()
 
-				else:
-					result = await cursor.fetchone()
+					else:
+						result = await cursor.fetchone()
 
 		if fetch == "all" and len(result) == 0:
 			return None
