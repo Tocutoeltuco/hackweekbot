@@ -1,5 +1,6 @@
 import asyncio
 import discord
+import traceback
 import json
 
 class Server:
@@ -196,7 +197,11 @@ class Server:
 		while True:
 			await asyncio.sleep(.1)
 			try:
-				packet = await self.parse_packet(await self.recv(reader))
+				received = await self.recv(reader)
+				try:
+					packet = await self.parse_packet(received)
+				except:
+					traceback.print_exc()
 
 				if packet is not None:
 					if not "result" in packet:
@@ -211,15 +216,18 @@ class Server:
 					await self.send(writer, {"result": "error"})
 				except:
 					print(peername, "closed 2")
+					writer.close()
 					return
 			except ValueError:
 				try:
 					await self.send(writer, {"result": "error"})
 				except:
 					print(peername, "closed 3")
+					writer.close()
 					return
 			except:
 				print(peername, "closed 4")
+				writer.close()
 				return
 
 	async def main(self):
