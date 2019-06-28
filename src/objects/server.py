@@ -59,13 +59,24 @@ class Server:
 				"cogs": {},
 				"conf": {},
 				"roles": [],
-				"channels": []
+				"channels": [],
+				"permissions": {}
 			}
 
 			guild = self.client.get_guild(int(packet["guild_id"]))
 
 			if guild is not None:
 				config = await self.client.get_guild_config(guild.id)
+
+				for permission, data in config["permissions"].items():
+					response["permissions"][permission] = {
+						"big_roles": list(map(str, config["granted"]["big_roles"])),
+						"allowed_channels": list(map(str, config["granted"]["channels"])),
+						"allowed_roles": list(map(str, config["granted"]["roles"])),
+						"denied_channels": list(map(str, config["granted"]["channels"])),
+						"denied_roles": list(map(str, config["granted"]["roles"]))
+					}
+
 				cogs = {}
 				conf = {
 					"prefix": config["prefix"],
