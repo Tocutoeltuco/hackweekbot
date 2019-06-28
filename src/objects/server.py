@@ -12,9 +12,12 @@ class Server:
 	async def send(self, writer, packet):
 		writer.write(json.dumps(packet).encode() + b"\x01")
 		await writer.drain()
+		print("Sent", packet)
 
 	async def recv(self, reader):
-		return json.loads((await reader.readuntil(b"\x01"))[:-1])
+		result = json.loads((await reader.readuntil(b"\x01"))[:-1])
+		print("Received", result)
+		return result
 
 	async def parse_packet(self, packet):
 		if packet["type"] == "get_permissions":
