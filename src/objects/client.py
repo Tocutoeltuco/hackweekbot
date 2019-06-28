@@ -363,18 +363,8 @@ class Client(commands.Bot):
 		result = self.msgcache.get_from_cache("answers", msg_id)
 
 		if result[0]:
-			answer = result[1]
-			guild = self.get_guild(answer.guild.id)
-
-			if guild is not None:
-				try:
-					channel = await guild.fetch_channel(answer.channel.id)
-					return await channel.fetch_message(answer.id)
-				except:
-					pass
-
 			self.msgcache.remove("answers", msg_id)
-			return None
+			return result[1]
 		return None
 
 	def del_answer(self, msg_id):

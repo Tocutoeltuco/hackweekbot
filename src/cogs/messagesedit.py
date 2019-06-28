@@ -14,18 +14,15 @@ class MessagesEditCog(commands.Cog, name="Messages Cog"):
 	async def on_raw_message_edit(self, payload):
 		answer = await self.bot.get_answer(payload.message_id)
 
-		if (answer is not None) and (payload.cached_message is None):
+		if answer is not None:
 			message = await answer.channel.fetch_message(payload.message_id)
-
-		elif getattr(payload, "cached_message", None) is not None:
-			message = payload.cached_message
 
 		elif "guild_id" in payload.data and payload.data["guild_id"] is not None:
 			guild = self.bot.get_guild(int(payload.data["guild_id"]))
 
 			if guild is not None:
 				channel = guild.get_channel(int(payload.data["channel_id"]))
-				message = await channel.fetch_message(int(payload.data["message_id"]))
+				message = await channel.fetch_message(payload.message_id)
 
 			else:
 				return
@@ -34,7 +31,10 @@ class MessagesEditCog(commands.Cog, name="Messages Cog"):
 			return
 
 		if answer is not None:
-			await answer.delete()
+			try:
+				await answer.delete()
+			except:
+				pass
 		await self.bot.process_commands(message)
 
 	@commands.Cog.listener()
@@ -42,7 +42,10 @@ class MessagesEditCog(commands.Cog, name="Messages Cog"):
 		answer = await self.bot.get_answer(payload.message_id)
 
 		if answer is not None:
-			await answer.delete()
+			try:
+				await answer.delete()
+			except:
+				pass
 
 	@commands.Cog.listener()
 	async def on_raw_bulk_message_delete(self, payload):
@@ -55,7 +58,10 @@ class MessagesEditCog(commands.Cog, name="Messages Cog"):
 				answers.append(answer)
 
 		if len(answers) > 0:
-			await answers[0].channel.delete_messages(answers)
+			try:
+				await answers[0].channel.delete_messages(answers)
+			except:
+				pass
 
 def setup(bot):
 	bot.add_cog(MessagesEditCog(bot))
