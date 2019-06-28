@@ -9,6 +9,15 @@ class SearchCog(commands.Cog, name="Search Cog"):
 	"""Searches through roles and users."""
 	def __init__(self, bot):
 		self.bot = bot
+		self.emojis = {
+			'online': 593950591865323529,
+			'offline': 593950591651414057,
+			'idle': 593950591869386770,
+			'dnd': 593950591634636801
+		}
+
+	def get_emoji(self, name):
+		return f'<:{name}:{self.emojis[name]}>'
 
 	@commands.command()
 	@utils.command_check()
@@ -19,20 +28,24 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		(([role's name]))
 		++.list owner++
 		"""
-		role = ' '.join(role)
+		role = ' '.join(role).lower()
 
 		if role=='owner':
 			return await ctx.send(ctx.guild.owner.name)
 
 		for r in ctx.guild.roles:
-			if r.name==role:
+			if r.name.lower()==role:
 				role = r
 				break
 		else:
 			return await ctx.send("Error: I haven't found the role on this server.")
 
-		members = [m.name for m in ctx.guild.members if role in m.roles]
-		await ctx.send("\n".join(members))
+		members = [f"{self.get_emoji(m.status.value)} {m.display_name}" for m in ctx.guild.members if role in m.roles]
+
+		embed = discord.Embed()
+		embed.title = f"Members with the role `{role}`:"
+		embed.description = "\n".join(members)
+		await ctx.send(embed=embed)
 
 	@commands.command()
 	@utils.command_check()
@@ -46,18 +59,27 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		if len(args)<2:
 			return await ctx.send('Invalid syntax for the command.')
 
-		role = ' '.join(args[:-1])
+		role = ' '.join(args[:-1]).lower()
 		name = args[-1].lower()
 
 		for r in ctx.guild.roles:
-			if r.name==role:
+			if r.name.lower()==role:
 				role = r
 				break
 		else:
 			return await ctx.send("Error: I haven't found the role on this server.")
 
-		members = [m.name for m in ctx.guild.members if role in m.roles and ((m.nick is not None and name in m.nick.lower()) or name in m.name.lower())]
-		await ctx.send("\n".join(members))
+		members = []
+		for m in ctx.guild.members:
+			if role not in m.roles:
+				continue
+			if m.nick is not None and name in m.nick.lower() or name in m.name.lower():
+				members.append(f"{self.get_emoji(m.status.value)} {m.display_name}")
+
+		embed = discord.Embed()
+		embed.title = f"Members with the role `{role}`:"
+		embed.description = "\n".join(members)
+		await ctx.send(embed=embed)
 
 	@commands.command()
 	@utils.command_check()
@@ -73,12 +95,16 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		for guild in ctx.bot.guilds:
 			for m in ctx.guild.members:
 				if m.discriminator==discrim and m!=ctx.author:
-					members.append(m.display_name)
+					members.append(f"{self.get_emoji(m.status.value)} {m.name}#{m.discriminator}")
 				await asyncio.sleep(10**-5) # can be heavy with lot of guilds
 
 		if len(members)==0:
 			return await ctx.send("You have an unique discriminator on this server.")
-		await ctx.send('\n'.join(members))
+
+		embed = discord.Embed()
+		embed.title = f"Members with the discriminator `{discrim}`:"
+		embed.description = "\n".join(members)
+		await ctx.send(embed=embed)
 
 def setup(bot):
 	bot.add_cog(SearchCog(bot))
