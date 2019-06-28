@@ -1,6 +1,5 @@
 import objects.utils as utils
 from discord.ext import commands
-from bs4 import BeautifulSoup as BS
 
 import aiohttp
 import discord
@@ -57,26 +56,32 @@ class ApiCog(commands.Cog, name="Api Cog"):
 		"""{{Shows the definition of a word.}}
 		[[]]
 		(([word]))
-		++.urban postpone++
+		++.dict postpone++
 		"""
-		data = {
-			'word': ' '.join(args)
+		params = {
+			'define': ' '.join(args)
 		}
 
 		try:
-			async with self.session.post('http://services.aonaware.com/DictService/DictService.asmx/Define', data=data) as resp:
+			async with self.session.get('https://googledictionaryapi.eu-gb.mybluemix.net', params=params) as resp:
 				resp.raise_for_status()
-				result = await resp.read()
-				bs = BS(result.decode(), 'lxml')
-				definition = bs.html.body.worddefinition.definition.worddefinition.text # bruh
+				result = (await resp.json())[0]
 		except aiohttp.client_exceptions.ClientResponseError:
 			return await ctx.send(embed=discord.Embed(title=f"Dictionary Search: `{' '.join(args)}`", description="```Not Found```", color=0xDC143C))
 
+		meaning = list(result.get('meaning').values())[0][0]
+		description = '\n'.join([
+			f"**__Definition__:**\n```{meaning.get('definition')}```",
+			f"**__Example__:**\n```{meaning.get('example')}```"
+		])
+
 		embed = discord.Embed()
-		embed.title = f"Dictionary Search: `{data['word']}`"
-		embed.description = f"\n**__Definition__:**\n```{definition}```"
+		embed.title = f"Dictionary Search: `{result.get('word')}`"
+		embed.description = description
+		embed.add_field(name='Type 📖', value=f"{list(result.get('meaning').keys())[0]}", inline=True)
+		embed.add_field(name='Phonetic 👂', value=f"`{result.get('phonetic')}`", inline=True)
 		embed.color = 0xE86222
-		embed.set_footer(text="http://services.aonaware.com/DictService")
+		embed.set_footer(text="https://googledictionaryapi.eu-gb.mybluemix.net/")
 
 		await ctx.send(embed=embed)
 
