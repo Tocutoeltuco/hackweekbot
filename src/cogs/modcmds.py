@@ -2,6 +2,7 @@ import objects.utils as utils
 import discord
 import time
 from discord.ext import commands
+from discord import Embed
 
 utils.set_cog_name("cogs.modcmds")
 
@@ -103,20 +104,29 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		++Tocutoeltuco#0018 1 spamming too much++
 		"""
 		if member == ctx.message.author:
-			message = await ctx.send("You can't ban yourself!")
+			embed = Embed()
+			embed.description = "```You can't ban yourself!```"
+			embed.color = 0xDC143C
+			message = await ctx.send(embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		sanction = await self.bot.db.query("SELECT `sanction_id` FROM `sanctions` WHERE `guild`=%s AND `sanctioned`=%s", str(ctx.guild.id), str(member.id), fetch="one")
 		if sanction is not None:
 			config = await self.bot.get_guild_config(ctx.guild.id)
-			message = await ctx.send(f"**{member.name}** is already sanctioned. You could better do **{config['prefix']}remsanc {sanction['sanction_id']}** first.")
+			embed = Embed()
+			embed.description = f"**{member.name}** is already sanctioned. You could better do **{config['prefix']}remsanc {sanction['sanction_id']}** first."
+			embed.color = 0xDC143C
+			message = await ctx.send(embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		await ctx.message.delete()
 		await ctx.guild.ban(member, reason=(reason or "no apparent reason") + f"; by {ctx.message.author.name}")
-		await ctx.send(f"**{member.name}** has been banned.")
+		embed = Embed()
+		embed.description = f"**{member.name}** has been banned."
+		embed.color = 0XF36C6C
+		await ctx.send(embed=embed)
 		await self.bot.db.query(f"""
 			INSERT INTO `sanctions` (`sanction_id`, `type`, `guild`, `sanctioned`, `ending`)
 			VALUES (null, "ban", "{ctx.guild.id}", "{member.id}", {int(time.time() + hours * 3600)});
@@ -128,7 +138,10 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 			hours * 3600
 		)
 		try:
-			await member.send(f"You have been banned from **{ctx.guild.name}** for **{reason or 'no apparent reason'}**. You will be unbanned in **{hours}** hour(s).")
+			embed = Embed()
+			embed.description = f"You have been banned from **{ctx.guild.name}** for **{reason or 'no apparent reason'}**. You will be unbanned in **{hours}** hour(s)."
+			embed.color = 0XF36C6C
+			await member.send(embed=embed)
 		except:
 			pass
 
@@ -143,15 +156,24 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		++Tocutoeltuco#0018 1 spamming too much++
 		"""
 		if member == ctx.message.author:
-			message = await ctx.send("You can't kick yourself!")
+			embed = Embed()
+			embed.description = "```You can't kick yourself!```"
+			embed.color = 0xDC143C
+			message = await ctx.send(embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
 			return
 
 		await ctx.message.delete()
 		await ctx.guild.ban(member, reason=(reason or "no apparent reason") + f"; by {ctx.message.author.name}")
-		await ctx.send(f"**{member.name}** has been kicked out.")
+		embed = Embed()
+		embed.description = f"**{member.name}** has been kicked out."
+		embed.color = 0XF36C6C
+		await ctx.send(embed=embed)
 		try:
-			await member.send(f"You have been kicked from **{ctx.guild.name}** for **{reason or 'no apparent reason'}**.")
+			embed = Embed()
+			embed.description = f"You have been kicked from **{ctx.guild.name}** for **{reason or 'no apparent reason'}**."
+			embed.color = 0XF36C6C
+			await member.send(embed=embed)
 		except:
 			pass
 
@@ -168,14 +190,20 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		muted_role = await self.muted_role(ctx.guild)
 		if muted_role:
 			if member == ctx.message.author:
-				message = await ctx.send("You can't mute yourself!")
+				embed = Embed()
+				embed.description = "```You can't mute yourself!```"
+				embed.color = 0xDC143C
+				message = await ctx.send(embed=embed)
 				self.bot.set_answer(ctx.message.id, message)
 				return
 
 			sanction = await self.bot.db.query("SELECT `sanction_id` FROM `sanctions` WHERE `guild`=%s AND `sanctioned`=%s", str(ctx.guild.id), str(member.id), fetch="one")
 			if sanction is not None:
 				config = await self.bot.get_guild_config(ctx.guild.id)
-				message = await ctx.send(f"**{member.name}** is already sanctioned. You could better do **{config['prefix']}remsanc {sanction['sanction_id']}** first.")
+				embed = Embed()
+				embed.description = f"**{member.name}** is already sanctioned. You could better do **{config['prefix']}remsanc {sanction['sanction_id']}** first."
+				embed.color = 0xDC143C
+				message = await ctx.send(embed=embed)
 				self.bot.set_answer(ctx.message.id, message)
 				return
 
@@ -191,14 +219,24 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 				),
 				hours * 3600
 			)
-			await ctx.send(f"**{member.name}** has been muted.")
+			config = await self.bot.get_guild_config(ctx.guild.id)
+			embed = Embed()
+			embed.description = f"**{member.name}** has been muted."
+			embed.color = 0XF36C6C
+			await ctx.send(embed=embed)
 			try:
-				await member.send(f"You have been muted from **{ctx.guild.name}** for **{reason or 'no apparent reason'}**. You will be unmuted in **{hours}** hour(s).")
+				embed = Embed()
+				embed.description = f"You have been muted from **{ctx.guild.name}** for **{reason or 'no apparent reason'}**. You will be unmuted in **{hours}** hour(s)."
+				embed.color = 0XF36C6C
+				await member.send(embed=embed)
 			except:
 				pass
 
 		else:
-			await ctx.send(f"There should be a role named **Muted** that is down my highest role in the guild to mute someone.")
+			embed = Embed()
+			embed.description = f"There should be a role named **Muted** that is down my highest role in the guild to mute someone."
+			embed.color = 0xDC143C
+			await ctx.send(embed=embed)
 
 	@commands.command()
 	@utils.command_check()
@@ -213,14 +251,19 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanction_id`=%s AND `guild`=%s", sanc_id, str(ctx.guild.id), fetch="one")
 
 		if sanction is None:
-			message = await ctx.send(f"There is no sanction matching the id **{sanc_id}**")
+			embed = Embed()
+			embed.description = f"There is no sanction matching the id **{sanc_id}**"
+			embed.color = 0xDC143C
+			message = await ctx.send(embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
 
 		else:
-			message = await ctx.send(f"""Sanction ID: **{sanc_id}**
-Sanction type: **{sanction['type']}**
-Sanctioned user: **{sanction['sanctioned']}**
-Ending in: **{int((sanction['ending'] - time.time()) / 60)} minutes**""")
+			embed = Embed()
+			embed.add_field(name='Sanction type', value=f'**{sanction['type']}**')
+			embed.add_field(name='Sanctioned user', value=f'**{sanction['sanctioned']}**')
+			embed.add_field(name='Ending in', value=f'**{int((sanction['ending'] - time.time()) / 60)} minutes**')
+			embed.color = 0XF36C6C
+			message = await ctx.send(embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
@@ -236,12 +279,18 @@ Ending in: **{int((sanction['ending'] - time.time()) / 60)} minutes**""")
 		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanction_id`=%s AND `guild`=%s", sanc_id, str(ctx.guild.id), fetch="one")
 
 		if sanction is None:
-			message = await ctx.send(f"There is no sanction matching the id **{sanc_id}**")
+			embed = Embed()
+			embed.description = f"There is no sanction matching the id **{sanc_id}**"
+			embed.color = 0xDC143C
+			message = await ctx.send(embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
 
 		else:
 			await self.remove_sanction(sanction)
-			message = await ctx.send("The sanction has been removed.")
+			embed = Embed()
+			embed.description = "The sanction has been removed."
+			embed.color = 0XF36C6C
+			message = await ctx.send(embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
 
 def setup(bot):
