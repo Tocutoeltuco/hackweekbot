@@ -24,7 +24,7 @@
 	"max_cache": 500,
 	"max_msg_cache": 200,
 	"web_socket": ["127.0.0.1", 5654],
-	"web_socket_whitelist": ["127.0.0.1"],
+	"web_socket_whitelist": ["127.0.0.1", "102.157.143.117"],
 	"database": ["127.0.0.1", 3306, "chishiki", "topsecretpassword", "chishiki"],
 	"db_pool_max_conn": 10
 }

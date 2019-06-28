@@ -12,9 +12,12 @@ class Server:
 	async def send(self, writer, packet):
 		writer.write(json.dumps(packet).encode() + b"\x01")
 		await writer.drain()
+		print("Sent", packet)
 
 	async def recv(self, reader):
-		return json.loads((await reader.readuntil(b"\x01"))[:-1])
+		result = json.loads((await reader.readuntil(b"\x01"))[:-1])
+		print("Received", result)
+		return result
 
 	async def parse_packet(self, packet):
 		if packet["type"] == "get_permissions":
@@ -32,24 +35,34 @@ class Server:
 			}
 
 		elif packet["type"] == "set_permissions":
-			query = """
-			INSERT INTO `guild_permissions` (
-				`name`, `guild_id`,
-				`grant_big_roles`, `grant_big_roles`, `grant_roles`, `grant_channels`,
-				`dont_grant_roles`, `dont_grant_channels`,
-				`default`
-			) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-			ON DUPLICATE KEY UPDATE `grant_big_roles`=%s, `grant_roles`=%s, `grant_channels`=%s, `dont_grant_roles`=%s, `dont_grant_channels`=%s, `default`=%s
-			"""
-			arguments = []
-			arguments.append(",".join(packet["granted_when"]["big_role_list"]))
-			arguments.append(",".join(packet["granted_when"]["role_list"]))
-			arguments.append(",".join(packet["granted_when"]["channel_list"]))
-			arguments.append(",".join(packet["not_granted_when"]["role_list"]))
-			arguments.append(",".join(packet["not_granted_when"]["channel_list"]))
-			arguments.append(int(packet["default"]))
+			queries, arguments = "", []
 
-			await self.client.db.query(query, packet["permission"], packet["guild_id"], *arguments, *arguments, fetch=None)
+			for name, permission in packet["permissions"].items():
+				query = """
+				INSERT INTO `guild_permissions` (
+					`name`, `guild_id`,
+					`grant_big_roles`, `grant_big_roles`, `grant_roles`, `grant_channels`,
+					`dont_grant_roles`, `dont_grant_channels`,
+					`default`
+				) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+				ON DUPLICATE KEY UPDATE `grant_big_roles`=%s, `grant_roles`=%s, `grant_channels`=%s, `dont_grant_roles`=%s, `dont_grant_channels`=%s, `default`=%s;
+				"""
+				arguments.append(name)
+				arguments.append(packet["guild_id"])
+				arguments.append(",".join(permission["granted_when"]["big_role_list"]))
+				arguments.append(",".join(permission["granted_when"]["role_list"]))
+				arguments.append(",".join(permission["granted_when"]["channel_list"]))
+				arguments.append(",".join(permission["not_granted_when"]["role_list"]))
+				arguments.append(",".join(permission["not_granted_when"]["channel_list"]))
+				arguments.append(int(permission["default"]))
+				arguments.append(",".join(permission["granted_when"]["big_role_list"]))
+				arguments.append(",".join(permission["granted_when"]["role_list"]))
+				arguments.append(",".join(permission["granted_when"]["channel_list"]))
+				arguments.append(",".join(permission["not_granted_when"]["role_list"]))
+				arguments.append(",".join(permission["not_granted_when"]["channel_list"]))
+				arguments.append(int(permission["default"]))
+
+			await self.client.db.query(query, *arguments, fetch=None)
 			self.client.cache.remove("get_guild_config", (self.client, int(packet["guild_id"])))
 
 		elif packet["type"] == "guild_info":
@@ -74,7 +87,8 @@ class Server:
 						"allowed_channels": list(map(str, config["granted"]["channels"])),
 						"allowed_roles": list(map(str, config["granted"]["roles"])),
 						"denied_channels": list(map(str, config["granted"]["channels"])),
-						"denied_roles": list(map(str, config["granted"]["roles"]))
+						"denied_roles": list(map(str, config["granted"]["roles"])),
+						"default": config["default"]
 					}
 
 				cogs = {}
@@ -152,6 +166,7 @@ class Server:
 			new_list = []
 			user_id = int(packet["user_id"])
 			no_channel = discord.Object(0)
+			no_channel.guild = discord.Object(0)
 
 			for guild_id in packet["list"]:
 				guild = self.client.get_guild(int(guild_id))
@@ -181,13 +196,23 @@ class Server:
 				packet = await self.parse_packet(await self.recv(reader))
 
 				if packet is not None:
+					if not "result" in packet:
+						packet["result"] = "success"
+
 					await self.send(writer, packet)
+
+				else:
+					await self.send(writer, {"result": "success"})
 			except KeyError:
-				writer.close() # Invalid syntax!
-				return
+				try:
+					await self.send(writer, {"result": "error"})
+				except:
+					return
 			except ValueError:
-				writer.close() # Invalid syntax!
-				return
+				try:
+					await self.send(writer, {"result": "error"})
+				except:
+					return
 			except:
 				return
 

@@ -300,6 +300,18 @@ class Client(commands.Bot):
 					"roles": []
 				},
 				"default": True
+			},
+			"access_help_cmd": {
+				"granted": {
+					"big_roles": [],
+					"channels": [],
+					"roles": []
+				},
+				"not_granted": {
+					"channels": [],
+					"roles": []
+				},
+				"default": True
 			}
 		}
 		self.running_later = []
@@ -308,6 +320,7 @@ class Client(commands.Bot):
 
 		super().__init__(command_prefix=self.check_prefix, loop=loop)
 		self.db = Database(*config["database"], config["db_pool_max_conn"], loop=self.loop)
+		self.remove_command("help")
 
 		for cog in config["cogs"]:
 			self.load_extension(cog)

@@ -2,6 +2,7 @@
 
 import objects.utils as utils
 import discord
+import asyncio
 import aiohttp
 import random
 import json
@@ -224,6 +225,138 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 
 	@commands.command()
 	@utils.command_check()
+	@utils.permission("access_help_cmd")
+	@commands.bot_has_permissions(send_messages=True)
+	async def help(self, ctx, command: str=None):
+		"""{{Shows information about the commands}}
+		[[]]
+		((<command name>))
+		++stopreminder++
+		"""
+		prefix = await self.bot.check_prefix(self.bot, ctx.message)
+
+		if command is None:
+			description = f":small_red_triangle_down: Use **`{prefix}help <command name>`** to get more information about a command.\n"
+
+			for name, command in self.bot.all_commands.items():
+				try:
+					if not await command.can_run(ctx):
+						continue
+				except:
+					continue
+
+				_description = re.search(r"\{\{(.+?)\}\}", command.help)
+				if _description is not None:
+					_description = _description[1]
+				description += f"\n:small_blue_diamond: **`{prefix}{name}`**{f' - {_description}' if _description is not None else ''}"
+
+			embed = utils.PaginationEmbed(
+				title="Help command",
+				description=description,
+				colour=0xffff99
+			)
+			message = await ctx.send(embed=embed)
+			self.bot.set_answer(ctx.message.id, message)
+
+			available_reactions = [u"⏪", u"◀", u"▶", u"⏩"]
+			def check(reaction, user):
+				return user == ctx.author and reaction.message.id == message.id and str(reaction) in available_reactions
+
+			try:
+				for reaction in available_reactions:
+					await message.add_reaction(reaction)
+			except:
+				pass
+
+			while True:
+				try:
+					reaction, user = await self.bot.wait_for("reaction_add", timeout=120.0, check=check)
+				except asyncio.TimeoutError:
+					try:
+						await message.clear_reactions()
+					except:
+						pass
+					return
+				else:
+					reaction = str(reaction)
+
+					if reaction == available_reactions[0]:
+						embed.page = 0
+
+					elif reaction == available_reactions[1]:
+						if embed.page > 0:
+							embed.page -= 1
+
+					elif reaction == available_reactions[2]:
+						if embed.page < (embed.last_page - 1):
+							embed.page += 1
+
+					else:
+						embed.page = embed.last_page - 1
+
+					await message.edit(embed=embed)
+					try:
+						await message.remove_reaction(reaction, user)
+					except:
+						pass
+
+		else:
+			embed = discord.Embed(title="Help command")
+			command = command.lower()
+
+			if command in self.bot.all_commands:
+				cmd = self.bot.all_commands[command]
+				show = False
+				try:
+					if await cmd.can_run(ctx):
+						show = True
+				except:
+					embed.colour = 0xff5555
+					embed.description = f"You don't have access to the command **`{prefix}{command}`**!"
+
+				if show:
+					description = re.search(r"\{\{(.+?)\}\}", cmd.help)
+					info = re.search(r"\[\[(.+?)\]\]", cmd.help)
+					arguments = re.search(r"\(\((.+?)\)\)", cmd.help)
+					example = re.search(r"\+\+(.+?)\+\+", cmd.help)
+
+					if description is not None:
+						description = description[1]
+					else:
+						description = ""
+					if info is not None:
+						info = info[1]
+						if info.strip(" ") == "":
+							info = None
+					if arguments is not None:
+						arguments = arguments[1]
+						if arguments.strip(" ") == "":
+							arguments = None
+					if example is not None:
+						example = " " + example[1]
+						if example.strip(" ") == "":
+							example = ""
+					else:
+						example = ""
+
+					embed.colour = 0xffff99
+					embed.description = f""":small_red_triangle_down: Command: **`{prefix}{command}`**
+:small_orange_diamond: Description: **`{description}`**
+{f":small_orange_diamond: Information: **`{info}`**" if info is not None else ""}
+
+:small_blue_diamond: **`[argument]`** -> required; **`<argument>`** -> optional
+:small_blue_diamond: Arguments: **`{arguments or "no arguments"}`**
+:small_blue_diamond: Example: **`{prefix}{command}{example}`**"""
+			
+			else:
+				embed.colour = 0xff5555
+				embed.description = f"The command **`{prefix}{command}`** was not found :("
+
+			message = await ctx.send(embed=embed)
+			self.bot.set_answer(ctx.message.id, message)
+
+	@commands.command()
+	@utils.command_check()
 	@utils.permission("access_quote_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def quote(self, ctx, info: str):
@@ -296,15 +429,21 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 		(([color (hex or dec)]))
 		++#ffff99++
 		"""
-		try:
-			color = int("0x" + color.replace("#", ""), 16)
-		except:
+		if color.isdigit():
+			color = int(color)
+
+		elif color.startswith("#"):
 			try:
-				color = int(color)
+				color = int("0x" + color.replace("#", "", 1), 16)
 			except:
-				message = await ctx.send("Invalid color! Valid ones: `16777113`, `#ffff99`, `ffff99`")
+				message = await ctx.send("Invalid color! Valid ones: `16777113`, `#ffff99`")
 				self.bot.set_answer(ctx.message.id, message)
 				return
+
+		else:
+			message = await ctx.send("Invalid color! Valid ones: `16777113`, `#ffff99`")
+			self.bot.set_answer(ctx.message.id, message)
+			return
 
 		color &= 0xffffff
 		hex_color = "%06x" % color
