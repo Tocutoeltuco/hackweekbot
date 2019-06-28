@@ -5,14 +5,18 @@
 		"cogs.statistics": 2,
 		"cogs.memberlogs": 3,
 		"cogs.simplecmds": 4,
-		"cogs.activity": 5
+		"cogs.activity": 5,
+		"cogs.api": 6,
+		"cogs.search": 7
 	},
 	"cogs": [
 		"cogs.modcmds",
 		"cogs.statistics",
 		"cogs.memberlogs",
 		"cogs.simplecmds",
-		"cogs.activity"
+		"cogs.activity",
+		"cogs.api",
+		"cogs.search"
 	],
 	"testserver": 592104443151908864,
 	"max_cache": 500,
