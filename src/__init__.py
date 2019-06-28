@@ -17,3 +17,5 @@ client.server = server
 serverloop.create_task(server.main())
 threading.Thread(target=serverloop.run_forever).start()
 client.run(os.getenv("DISCO_TOKEN"))
+# stops the server loop after the client is closed.
+serverloop.call_soon_threadsafe(serverloop.stop)
