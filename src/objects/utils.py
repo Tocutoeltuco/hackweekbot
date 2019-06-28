@@ -1,3 +1,4 @@
+import re
 from discord.ext import commands
 
 cog_name = None
@@ -31,6 +32,26 @@ def permission(permission):
 		return await ctx.bot.has_permissions(ctx.author, ctx.channel, permission)
 
 	return commands.check(predicate)
+
+def time(arg):
+	arg = arg.lower()
+
+	seconds = re.search(r"(\d+)s", arg)
+	minutes = re.search(r"(\d+)m", arg)
+	hours = re.search(r"(\d+)h", arg)
+	days = re.search(r"(\d+)d", arg)
+
+	time_quantity = 0
+	if seconds is not None:
+		time_quantity += int(seconds[1])
+	if minutes is not None:
+		time_quantity += int(minutes[1]) * 60
+	if hours is not None:
+		time_quantity += int(hours[1]) * 3600
+	if days is not None:
+		time_quantity += int(days[1]) * 86400
+	
+	return time_quantity
 
 def integer(arg):
 	try:
