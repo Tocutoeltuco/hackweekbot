@@ -173,7 +173,11 @@ class Server:
 				guild = self.client.get_guild(int(guild_id))
 
 				if guild is not None:
-					member = await guild.fetch_member(user_id)
+					print(guild_id, "is not none")
+					try:
+						member = await guild.fetch_member(user_id)
+					except:
+						continue
 
 					if member is not None:
 						if await self.client.has_permission(member, no_channel, "edit_guild_config"):
