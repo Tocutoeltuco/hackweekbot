@@ -259,9 +259,9 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 
 		else:
 			embed = Embed()
-			embed.add_field(name='Sanction type', value=f'**{sanction['type']}**')
-			embed.add_field(name='Sanctioned user', value=f'**{sanction['sanctioned']}**')
-			embed.add_field(name='Ending in', value=f'**{int((sanction['ending'] - time.time()) / 60)} minutes**')
+			embed.add_field(name='Sanction type', value=f"**{sanction['type']}**")
+			embed.add_field(name='Sanctioned user', value=f"**{sanction['sanctioned']}**")
+			embed.add_field(name='Ending in', value=f"**{int((sanction['ending'] - time.time()) / 60)} minutes**")
 			embed.color = 0XF36C6C
 			message = await ctx.send(embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
