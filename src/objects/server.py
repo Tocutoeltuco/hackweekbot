@@ -38,7 +38,7 @@ class Server:
 			queries, arguments = "", []
 
 			for name, permission in packet["permissions"].items():
-				query = """
+				queries += """
 				INSERT INTO `guild_permissions` (
 					`name`, `guild_id`,
 					`grant_big_roles`, `grant_big_roles`, `grant_roles`, `grant_channels`,
@@ -62,7 +62,7 @@ class Server:
 				arguments.append(",".join(permission["not_granted_when"]["channel_list"]))
 				arguments.append(int(permission["default"]))
 
-			await self.client.db.query(query, *arguments, fetch=None)
+			await self.client.db.query(queries, *arguments, fetch=None)
 			self.client.cache.remove("get_guild_config", (self.client, int(packet["guild_id"])))
 
 		elif packet["type"] == "guild_info":
