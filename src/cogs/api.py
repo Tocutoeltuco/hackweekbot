@@ -157,12 +157,13 @@ class ApiCog(commands.Cog, name="Api Cog"):
 
 		currencies = [f"{cur.get('name')} {cur.get('symbol')}" for cur in data.get('currencies')]
 		languages = [lang.get('name') for lang in data.get('languages')]
+		region = f"[{data.get('subregion')}](https://www.google.com/maps/place/{data.get('name').replace(' ', '%20')})"
 
 		embed = discord.Embed()
 		embed.title = f"Country `{data.get('name')}`"
 		embed.set_thumbnail(url=f'http://flags.fmcdn.net/data/flags/w580/{data.get("alpha2Code").lower()}.png')
 		embed.add_field(name='Capital 🏛', value=data.get('capital'), inline=True)
-		embed.add_field(name='Region 📍', value=f"[{data.get('subregion')}](https://www.google.com/maps/place/{data.get('name')})", inline=True)
+		embed.add_field(name='Region 📍', value=region, inline=True)
 		embed.add_field(name='Area 📏', value=f"{round(data.get('area'))} km²", inline=True)
 		embed.add_field(name='Population 👥', value=f"{data.get('population'):,}", inline=True)
 		embed.add_field(name='Currency 💰', value=', '.join(currencies), inline=True)
