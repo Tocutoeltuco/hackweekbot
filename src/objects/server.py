@@ -32,7 +32,15 @@ class Server:
 			}
 
 		elif packet["type"] == "set_permissions":
-			query = "UPDATE `guild_permissions` SET `grant_big_roles`=%s, `grant_roles`=%s, `grant_channels`=%s, `dont_grant_roles`=%s, `dont_grant_channels`=%s, `default`=%s WHERE `name`=%s AND `guild_id`=%s"
+			query = """
+			INSERT INTO `guild_permissions` (
+				`name`, `guild_id`,
+				`grant_big_roles`, `grant_big_roles`, `grant_roles`, `grant_channels`,
+				`dont_grant_roles`, `dont_grant_channels`,
+				`default`
+			) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+			ON DUPLICATE KEY UPDATE `grant_big_roles`=%s, `grant_roles`=%s, `grant_channels`=%s, `dont_grant_roles`=%s, `dont_grant_channels`=%s, `default`=%s
+			"""
 			arguments = []
 			arguments.append(",".join(packet["granted_when"]["big_role_list"]))
 			arguments.append(",".join(packet["granted_when"]["role_list"]))
@@ -41,33 +49,93 @@ class Server:
 			arguments.append(",".join(packet["not_granted_when"]["channel_list"]))
 			arguments.append(int(packet["default"]))
 
-			await self.client.db.query(query, *arguments, packet["permission"], packet["guild_id"], fetch=None)
+			await self.client.db.query(query, packet["permission"], packet["guild_id"], *arguments, *arguments, fetch=None)
 			self.client.cache.remove("get_guild_config", (self.client, int(packet["guild_id"])))
 
-		elif packet["type"] == "get_cogs":
-			config = await self.client.get_guild_config(int(packet["guild_id"]))
-			response = {"cogs": {}}
+		elif packet["type"] == "guild_info":
+			response = {
+				"name": None,
+				"icon": None,
+				"cogs": {},
+				"conf": {},
+				"roles": [],
+				"channels": []
+			}
 
-			for cog in self.client.config["cogs"]:
-				response["cogs"][cog] = cog in config["cogs"]
+			guild = self.client.get_guild(int(packet["guild_id"]))
+
+			if guild is not None:
+				config = await self.client.get_guild_config(guild.id)
+				cogs = {}
+				conf = {
+					"prefix": config["prefix"],
+					"welcome_channel": config["welcome_channel"],
+					"welcome_message": config["welcome_message"],
+					"goodbye_channel": config["goodbye_channel"],
+					"goodbye_message": config["goodbye_channel"]
+				}
+				cogs["testcog"] = "cogs.testcog" in config["cogs"]
+				for cog in self.client.config["cogs"]:
+					cogs[cog.split(".")[1]] = cog in config["cogs"]
+
+				for role in guild.roles:
+					response["roles"].append([str(role.id), role.name])
+
+				for channel in guild.text_channels:
+					response["channels"].append([channel.category.name if channel.category else None, str(channel.id), channel.name])
+
+				response["name"] = guild.name
+				response["icon"] = str(guild.icon_url)
+				response["cogs"] = cogs
+				response["conf"] = conf
 
 			return response
 
-		elif packet["type"] == "set_cogs":
-			config = await self.client.get_guild_config(int(packet["guild_id"]))
-			cogs_in = []
-			for cog, enabled in packet["cogs"].items():
-				if enabled:
-					cogs_in.append(cog)
-			for cog in config["cogs"]:
-				if cog not in packet["cogs"]:
-					cogs_in.append(cog)
+		elif packet["type"] == "set_guild_info":
+			guild = self.client.get_guild(int(packet["guild_id"]))
 
-			bitnumber = 0
-			for cog in cogs_in:
-				bitnumber += 1 << self.client.config["cogs_order"][cog]
-			await self.client.db.query("UPDATE `guild_configurations` SET `cogs`=%s WHERE `guild_id`=%s", bitnumber, packet["guild_id"], fetch=None)
-			self.client.cache.remove("get_guild_config", (self.client, int(packet["guild_id"])))
+			if guild is not None:
+				config = await self.client.get_guild_config(guild.id)
+				query = """
+				INSERT INTO `guild_configurations` (
+					`guild_id`, `prefix`,
+					`welcome_channel`, `welcome_message`,
+					`goodbye_channel`, `goodbye_message`,
+					`cogs`
+				) VALUES (%s, %s, %s, %s, %s, %s, %s)
+				ON DUPLICATE KEY UPDATE `prefix`=%s, `welcome_channel`=%s, `welcome_message`=%s, `goodbye_channel`=%s, `goodbye_message`=%s, `cogs`=%s
+				"""
+
+				cogs = config["cogs"].copy()
+				for cog, enabled in packet["cogs"].items():
+					cog = "cogs." + cog
+
+					if cog in cogs:
+						if not enabled:
+							del cogs[cogs.index(cog)]
+					else:
+						if enabled:
+							cogs.append(cog)
+				bitnumber = 0
+				for cog in cogs:
+					bitnumber += 1 << self.client.configs["cogs_order"][cog]
+
+				prefix = packet["conf"]["prefix"] if "prefix" in packet["conf"] else config["prefix"]
+				welcome_channel = packet["conf"]["welcome_channel"] if "welcome_channel" in packet["conf"] else config["welcome_channel"]
+				welcome_message = packet["conf"]["welcome_message"] if "welcome_message" in packet["conf"] else config["welcome_message"]
+				goodbye_channel = packet["conf"]["goodbye_channel"] if "goodbye_channel" in packet["conf"] else config["goodbye_channel"]
+				goodbye_message = packet["conf"]["goodbye_message"] if "goodbye_message" in packet["conf"] else config["goodbye_message"]
+
+				await self.client.db.query(
+					query, packet["guild_id"], prefix,
+					welcome_channel, welcome_message,
+					goodbye_channel, goodbye_message,
+					bitnumber,
+					welcome_message, welcome_message,
+					goodbye_channel, goodbye_message,
+					bitnumber, fetch=None
+				)
+				self.client.cache.remove("get_guild_config", (self.client, int(packet["guild_id"])))
 
 		elif packet["type"] == "guild_list":
 			new_list = []
@@ -86,45 +154,10 @@ class Server:
 
 			return new_list
 
-		elif packet["type"] == "get_conf":
-			conf = await self.client.get_guild_config(int(packet["guild_id"]))
-			return {
-				"prefix": conf["prefix"],
-				"welcome_channel": conf["welcome_channel"],
-				"welcome_message": conf["welcome_message"],
-				"goodbye_channel": conf["goodbye_channel"],
-				"goodbye_message": conf["goodbye_message"]
-			}
+		else:
+			raise KeyError()
 
-		elif packet["type"] == "set_conf":
-			queries, arguments = "", []
-
-			for index, value in packet["conf"].items():
-				queries += f"`{index}`=%s,"
-				arguments.append(value)
-
-			await self.client.db.query(f"UPDATE `guild_configurations` SET {queries[:-1]} WHERE `guild_id`=%s", *arguments, packet["guild_id"], fetch=None)
-			self.client.cache.remove("get_guild_config", (self.client, int(packet["guild_id"])))
-
-		elif packet["type"] == "get_roles":
-			response = []
-			guild = self.client.get_guild(int(packet["guild_id"]))
-
-			if guild is not None:
-				for role in guild.roles:
-					response.append([str(role.id), role.name])
-
-			return response
-
-		elif packet["type"] == "get_channels":
-			response = []
-			guild = self.client.get_guild(int(packet["guild_id"]))
-
-			if guild is not None:
-				for channel in guild.text_channels:
-					response.append([str(channel.id), channel.name])
-
-			return response
+		return {}
 
 	async def handle_client(self, reader, writer):
 		if writer.get_extra_info("peername")[0] not in self.config["remote_web_socket"]:
