@@ -101,7 +101,7 @@ class Server:
 					"goodbye_message": config["goodbye_channel"]
 				}
 				cogs["testcog"] = "cogs.testcog" in config["cogs"]
-				for cog in self.client.config["cogs"]:
+				for cog in self.config["cogs"]:
 					cogs[cog.split(".")[1]] = cog in config["cogs"]
 
 				for role in guild.roles:
@@ -144,7 +144,7 @@ class Server:
 							cogs.append(cog)
 				bitnumber = 0
 				for cog in cogs:
-					bitnumber += 1 << self.client.configs["cogs_order"][cog]
+					bitnumber += 1 << self.config["cogs_order"][cog]
 
 				prefix = packet["conf"]["prefix"] if "prefix" in packet["conf"] else config["prefix"]
 				welcome_channel = packet["conf"]["welcome_channel"] if "welcome_channel" in packet["conf"] else config["welcome_channel"]
