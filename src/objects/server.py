@@ -25,7 +25,7 @@ class Server:
 
 	async def parse_packet(self, packet):
 		if packet["type"] == "get_permissions":
-			config = await self.client.get_guild_config(int(packet["guild_id"]))["permissions"][packet["permission"]]
+			config = await self.client.get_guild_config(int(packet["guild_id"]), db=self.db)["permissions"][packet["permission"]]
 			return {
 				"granted_when": {
 					"big_role_list": list(map(str, config["granted"]["big_roles"])),
@@ -100,7 +100,7 @@ class Server:
 			guild = self.client.get_guild(int(packet["guild_id"]))
 
 			if guild is not None:
-				config = await self.client.get_guild_config(guild.id)
+				config = await self.client.get_guild_config(guild.id, db=self.db)
 
 				for permission, data in config["permissions"].items():
 					response["permissions"][permission] = {
@@ -141,7 +141,7 @@ class Server:
 			guild = self.client.get_guild(int(packet["guild_id"]))
 
 			if guild is not None:
-				config = await self.client.get_guild_config(guild.id)
+				config = await self.client.get_guild_config(guild.id, db=self.db)
 				query = """
 				INSERT INTO `guild_configurations` (
 					`guild_id`, `prefix`,

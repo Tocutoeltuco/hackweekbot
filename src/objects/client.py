@@ -387,8 +387,9 @@ class Client(commands.Bot):
 		self.msgcache.remove("answers", msg_id)
 		self.msgcache.append("answers", msg_id, answer)
 
-	async def _get_guild_config(self, guild_id):
-		result = await self.db.query("SELECT * FROM `guild_configurations` WHERE `guild_id`=%s", str(guild_id), fetch="one")
+	async def _get_guild_config(self, guild_id, db=None):
+		db = db or self.db
+		result = await db.query("SELECT * FROM `guild_configurations` WHERE `guild_id`=%s", str(guild_id), fetch="one")
 
 		if result is not None:
 			config = {}
@@ -414,8 +415,9 @@ class Client(commands.Bot):
 			return config
 		return self.default_config
 
-	async def _get_guild_permissions(self, guild_id):
-		result = await self.db.query("SELECT * FROM `guild_permissions` WHERE `guild_id`=%s", str(guild_id), fetch="all")
+	async def _get_guild_permissions(self, guild_id, db=None):
+		db = db or self.db
+		result = await db.query("SELECT * FROM `guild_permissions` WHERE `guild_id`=%s", str(guild_id), fetch="all")
 
 		if result is not None:
 			permissions = copy.deepcopy(self.default_permissions)
@@ -438,9 +440,9 @@ class Client(commands.Bot):
 		return self.default_permissions
 
 	@cache.cache
-	async def get_guild_config(self, guild_id):
-		config = await self._get_guild_config(guild_id)
-		config["permissions"] = await self._get_guild_permissions(guild_id)
+	async def get_guild_config(self, guild_id, db=None):
+		config = await self._get_guild_config(guild_id, db=db)
+		config["permissions"] = await self._get_guild_permissions(guild_id, db=db)
 		return config
 
 	async def check_prefix(self, bot, msg): # self and bot are == since this is a subclass
