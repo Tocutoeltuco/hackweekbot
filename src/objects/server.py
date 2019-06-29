@@ -2,6 +2,7 @@ import asyncio
 import discord
 import traceback
 import json
+from .database import Database
 
 class Server:
 	def __init__(self, objects, client, config, loop=None):
@@ -9,6 +10,8 @@ class Server:
 		self.objects = objects
 		self.client = client
 		self.config = config
+
+		self.db = Database(*config["database"], config["db_pool_max_conn"], loop=self.loop)
 
 	async def send(self, writer, packet):
 		writer.write(json.dumps(packet).encode() + b"\x01")
@@ -80,7 +83,7 @@ class Server:
 				arguments.append(",".join(permission["not_granted_when"]["channel_list"]))
 				arguments.append(int(permission["default"]))
 
-			await self.client.db.query(queries, *arguments, fetch=None)
+			await self.db.query(queries, *arguments, fetch=None)
 			self.client.cache.remove("get_guild_config", (self.client, int(packet["guild_id"])))
 
 		elif packet["type"] == "guild_info":
@@ -169,7 +172,7 @@ class Server:
 				goodbye_channel = packet["conf"]["goodbye_channel"] if "goodbye_channel" in packet["conf"] else config["goodbye_channel"]
 				goodbye_message = packet["conf"]["goodbye_message"] if "goodbye_message" in packet["conf"] else config["goodbye_message"]
 
-				await self.client.db.query(
+				await self.db.query(
 					query, packet["guild_id"], prefix,
 					welcome_channel, welcome_message,
 					goodbye_channel, goodbye_message,
