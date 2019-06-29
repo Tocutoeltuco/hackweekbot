@@ -47,9 +47,9 @@ class Server:
 					`name`, `guild_id`,
 					`grant_big_roles`, `grant_roles`, `grant_channels`,
 					`dont_grant_roles`, `dont_grant_channels`,
-					`default`
+					`default_grant`
 				) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-				ON DUPLICATE KEY UPDATE `grant_big_roles`=%s, `grant_roles`=%s, `grant_channels`=%s, `dont_grant_roles`=%s, `dont_grant_channels`=%s, `default`=%s;
+				ON DUPLICATE KEY UPDATE `grant_big_roles`=%s, `grant_roles`=%s, `grant_channels`=%s, `dont_grant_roles`=%s, `dont_grant_channels`=%s, `default_grant`=%s;
 				"""
 				arguments.append(name)
 				arguments.append(packet["guild_id"])
