@@ -48,20 +48,20 @@ class Cache:
 		name = func.__name__
 
 		if asyncio.iscoroutinefunction(func):
-			async def wrapper(*args):
+			async def wrapper(*args, **kwargs):
 				data = self.get_from_cache(name, args)
 
 				if not data[0]:
-					self.append(name, args, await func(*args))
+					self.append(name, args, await func(*args, **kwargs))
 					return self.get_from_cache(name, args)[1]
 				return data[1]
 
 		else:
-			def wrapper(*args):
+			def wrapper(*args, **kwargs):
 				data = self.get_from_cache(name, args)
 
 				if not data[0]:
-					self.append(name, args, func(*args))
+					self.append(name, args, func(*args, **kwargs))
 					return self.get_from_cache(name, args)[1]
 				return data[1]
 
