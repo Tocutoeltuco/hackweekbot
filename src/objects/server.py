@@ -176,7 +176,7 @@ class Server:
 					query, packet["guild_id"], prefix,
 					welcome_channel, welcome_message,
 					goodbye_channel, goodbye_message,
-					bitnumber,
+					bitnumber, prefix,
 					welcome_message, welcome_message,
 					goodbye_channel, goodbye_message,
 					bitnumber, fetch=None
