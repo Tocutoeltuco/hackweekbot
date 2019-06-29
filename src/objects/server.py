@@ -176,12 +176,12 @@ class Server:
 					print(guild_id, "is not none")
 					member = None
 					try:
-						member = guild.get_member(user_id)
+						member = await guild.fetch_member(user_id)
 					except:
 						pass
 
 					if member is not None:
-						if await self.client.has_permission(member, no_channel, "edit_guild_config"):
+						if await self.client.has_permissions(member, no_channel, "edit_guild_config"):
 							new_list.append(guild_id)
 
 			return new_list
@@ -207,6 +207,7 @@ class Server:
 					packet = await self.parse_packet(received)
 				except:
 					traceback.print_exc()
+					packet = None
 
 				if packet is not None:
 					if not "result" in packet:
