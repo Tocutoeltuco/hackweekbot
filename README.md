@@ -11,7 +11,7 @@ Our bot works along with [this repository](https://github.com/Tocutoeltuco/hackw
 [@tlbl4nk](https://github.com/tlbl4nk) (`󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪󠂪󠂪 󠂪󠂪 󠂪󠂪#8737`, ID: `436703225140346881` on discord)<br>
 
 ### <p align="center">:heart: Did you like it? :heart:</p>
-<p align="center">Don't hesitate to support us by giving a :star: to this project.</p>
+<p align="center">If yes, don't hesitate to support us by giving a :star: to this project.</p>
 
 ### <p align="center">Note from Tocutoeltuco:</p>
 Even though this was my first "big" project, it felt good to collaborate with very nice people. We thought that we could run tests and fix the bugs at the last moment without any problems, but unfortunately it didn't turn out that well. This was a nice experience and we all learned a lot from it. The code is full of bugs especially in part of socket communication between the website and the bot, and also the moderation system because we weren't able to test a much when we had little time left. We (or atleast I) will continue developing and working on the the bot since it is a nice and a calm project. I and my team wish good luck to the participants of the Discord Hack Week! This message may look weird or make no sense but I am too tired today, I woke up at 06:30 and kept working on the project until now, 23:30. :D
