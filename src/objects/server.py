@@ -210,8 +210,9 @@ class Server:
 					packet = None
 
 				if packet is not None:
-					if not "result" in packet:
-						packet["result"] = "success"
+					if type(packet) == dict:
+						if not "result" in packet:
+							packet["result"] = "success"
 
 					await self.send(writer, packet)
 
