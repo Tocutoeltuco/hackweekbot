@@ -214,7 +214,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_remind_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def stopreminder(self, ctx):
-		"""{{Stops your reminder. Bot won't remind you.}}
+		"""{{Cancels your ongoing reminder.}}
 		[[]]
 		(())
 		++++
@@ -459,7 +459,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 	@utils.permission("access_exec_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def exec(self, ctx, *, args: str):
-		"""{{Executes a piece of code with rextester}}
+		"""{{Loads a script using Rextester}}
 		[[]]
 		(([block quote with the language and code]))
 		++\\`\\`\\`python
@@ -597,7 +597,7 @@ print("Hello world!")\\`\\`\\`++
 	@utils.permission("access_translate_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def translate(self, ctx, settings: str, *, text: str):
-		"""{{Translates a sentence}}
+		"""{{Translates a sentence into from/to the language you want.}}
 		[[]]
 		(([<from_language->to_language] [text]))
 		++es-en Hola, ¿cómo estás?++

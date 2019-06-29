@@ -93,7 +93,7 @@ class ApiCog(commands.Cog, name="Api Cog"):
 	@utils.permission("access_anime_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def anime(self, ctx, *args):
-		"""{{Shows informations about an anime.}}
+		"""{{Shows information about an anime.}}
 		[[]]
 		(([anime's name]))
 		++dororo++

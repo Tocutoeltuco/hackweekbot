@@ -24,7 +24,7 @@ class SearchCog(commands.Cog, name="Search Cog"):
 	@utils.permission("access_list_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def list(self, ctx, *role):
-		"""{{Find all users having a specified role.}}
+		"""{{Shows all the users having a specific role}}
 		[[Works with the owner's role too.]]
 		(([role's name]))
 		++owner++
@@ -58,7 +58,7 @@ class SearchCog(commands.Cog, name="Search Cog"):
 	@utils.permission("access_searchin_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def searchin(self, ctx, *args):
-		"""{{Find a user which have a specified role.}}
+		"""{{Finds a user with a specific role}}
 		[[]]
 		(([role] [partial user's name]))
 		++mods patrik++
@@ -98,7 +98,7 @@ class SearchCog(commands.Cog, name="Search Cog"):
 	@utils.permission("access_discrim_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def discrim(self, ctx):
-		"""{{Searches for an user who has the same discriminator as you.}}
+		"""{{Searches for a user who has the same discriminator as you.}}
 		[[I'm looking in all guilds I'm in.]]
 		(())
 		++++

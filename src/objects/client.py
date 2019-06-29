@@ -447,7 +447,8 @@ class Client(commands.Bot):
 		config = await self.get_guild_config(msg.guild.id)
 		return config["prefix"]
 
-	async def on_command_error(self, ctx, exception):
+	async def on_command_error(self, ctx, exception): # ?
+		print(ctx, exception)
 		if isinstance(exception, (
 			commands.CheckFailure, commands.CommandNotFound,
 			commands.DisabledCommand, commands.ExpectedClosingQuoteError,

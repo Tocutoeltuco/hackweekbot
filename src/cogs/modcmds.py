@@ -54,10 +54,13 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 			return
 
 		if sanction["type"] == "ban":
-			await guild.unban(discord.Object(int(sanction["sanctioned"])), reason="The sanction has ended.")
+			try:
+				await guild.unban(discord.Object(int(sanction["sanctioned"])), reason="The sanction has ended.")
+			except:
+				pass
 
 		elif sanction["type"] == "mute":
-			member = await guild.get_member(int(sanction["sanctioned"]))
+			member = guild.get_member(int(sanction["sanctioned"]))
 			if member is None:
 				return
 
@@ -65,14 +68,17 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 			if muted_role is None:
 				return
 
-			await member.remove_roles(muted_role, reason="The sanction has ended.")
+			try:
+				await member.remove_roles(muted_role, reason="The sanction has ended.")
+			except:
+				pass
 
 	@commands.command(name="del")
 	@utils.command_check()
 	@utils.permission("access_del_cmd")
 	@commands.bot_has_permissions(manage_messages=True, send_messages=True)
 	async def delete(self, ctx, msg1: utils.integer, msg2: utils.integer):
-		"""{{Deletes many messages in the current channel.}}
+		"""{{Deletes messages in the given range of message ids.}}
 		[[]]
 		(([msg1 id] [msg2 id]))
 		++593970514213601281 593970724260151306++
@@ -242,17 +248,17 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 	@utils.command_check()
 	@utils.permission("access_sancinfo_cmd")
 	@commands.bot_has_permissions(send_messages=True)
-	async def sancinfo(self, ctx, sanc_id: utils.integer):
+	async def sancinfo(self, ctx, member: commands.MemberConverter):
 		"""{{Gets information about a user's sanction.}}
 		[[]]
 		(([ping/name]))
 		++Tocutoeltuco#0018++
 		"""
-		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanction_id`=%s AND `guild`=%s", sanc_id, str(ctx.guild.id), fetch="one")
+		sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `sanctioned`=%s AND `guild`=%s", str(member.id), str(ctx.guild.id), fetch="one")
 
 		if sanction is None:
 			embed = Embed()
-			embed.description = f"There is no sanction matching the id **{sanc_id}**"
+			embed.description = f"The given user is not sanctioned!"
 			embed.color = 0xDC143C
 			message = await ctx.send(embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
@@ -260,10 +266,10 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		else:
 			embed = Embed()
 			embed.add_field(name='Sanction type', value=f"**{sanction['type']}**")
-			embed.add_field(name='Sanctioned user', value=f"**{sanction['sanctioned']}**")
+			embed.add_field(name='Sanctioned user', value=f"<@{sanction['sanctioned']}>")
 			embed.add_field(name='Ending in', value=f"**{int((sanction['ending'] - time.time()) / 60)} minutes**")
 			embed.color = 0XF36C6C
-			message = await ctx.send(embed=embed)
+			message = await ctx.send(content=f"Sanction id: **`{sanction['sanction_id']}`**", embed=embed)
 			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
