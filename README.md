@@ -1,5 +1,5 @@
-# Chishiki
-*Our bot for the discord hack week!*<br>
+# <p align="center">Chishiki
+<p align="center">*Our bot for the discord hack week!*<br>
 
 Chishiki is a feature-rich Discord bot and knows of many commands that will help you build the best Discord server. Its prefix is `.`. When it's running, you can type `.help` to see all the commands.
 
