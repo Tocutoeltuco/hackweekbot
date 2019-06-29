@@ -84,12 +84,12 @@ class Server:
 
 				for permission, data in config["permissions"].items():
 					response["permissions"][permission] = {
-						"big_roles": list(map(str, config["granted"]["big_roles"])),
-						"allowed_channels": list(map(str, config["granted"]["channels"])),
-						"allowed_roles": list(map(str, config["granted"]["roles"])),
-						"denied_channels": list(map(str, config["granted"]["channels"])),
-						"denied_roles": list(map(str, config["granted"]["roles"])),
-						"default": config["default"]
+						"big_roles": list(map(str, data["granted"]["big_roles"])),
+						"allowed_channels": list(map(str, data["granted"]["channels"])),
+						"allowed_roles": list(map(str, data["granted"]["roles"])),
+						"denied_channels": list(map(str, data["granted"]["channels"])),
+						"denied_roles": list(map(str, data["granted"]["roles"])),
+						"default": data["default"]
 					}
 
 				cogs = {}
