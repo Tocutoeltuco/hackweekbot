@@ -45,10 +45,10 @@ class Server:
 				queries += """
 				INSERT INTO `guild_permissions` (
 					`name`, `guild_id`,
-					`grant_big_roles`, `grant_big_roles`, `grant_roles`, `grant_channels`,
+					`grant_big_roles`, `grant_roles`, `grant_channels`,
 					`dont_grant_roles`, `dont_grant_channels`,
 					`default`
-				) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+				) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
 				ON DUPLICATE KEY UPDATE `grant_big_roles`=%s, `grant_roles`=%s, `grant_channels`=%s, `dont_grant_roles`=%s, `dont_grant_channels`=%s, `default`=%s;
 				"""
 				arguments.append(name)
