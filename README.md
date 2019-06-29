@@ -1,7 +1,7 @@
 # <p align="center">Chishiki</p>
 <p align="center"><img src="https://cdn.discordapp.com/attachments/592105115872133160/594299077060198412/logoaaaa.png"><br>Our bot for the Discord Hack Week!</p><br>
 
-Chishiki is a feature-rich Discord bot and knows of many commands that will help you build the best Discord server. Its default prefix is `.`. When it's running, you can type `.help` to see all the commands.
+**Chishiki** is a feature-rich Discord bot and knows of many commands that will help you build the best Discord server. Its default prefix is `.`. When it's running, you can type `.help` to see all the commands.
 
 Our bot works along with [this repository](https://github.com/Tocutoeltuco/hackweeksite) and was made by a 5 people team:<br>
 [@Tocutoeltuco](https://github.com/Tocutoeltuco) (`Tocutoeltuco#0018`, ID: `212634414021214209` on discord)<br>
