@@ -50,6 +50,17 @@ class Server:
 				"""
 				arguments.append(name)
 				arguments.append(packet["guild_id"])
+				if "big_role_list" not in permissions["granted_when"]:
+					permissions["granted_when"]["big_role_list"] = []
+				if "role_list" not in permissions["granted_when"]:
+					permissions["granted_when"]["role_list"] = []
+				if "channel_list" not in permissions["granted_when"]:
+					permissions["granted_when"]["channel_list"] = []
+				if "role_list" not in permissions["not_granted_when"]:
+					permissions["not_granted_when"]["role_list"] = []
+				if "channel_list" not in permissions["not_granted_when"]:
+					permissions["not_granted_when"]["channel_list"] = []
+
 				arguments.append(",".join(permission["granted_when"]["big_role_list"]))
 				arguments.append(",".join(permission["granted_when"]["role_list"]))
 				arguments.append(",".join(permission["granted_when"]["channel_list"]))
