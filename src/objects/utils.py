@@ -20,7 +20,7 @@ async def cog_check(bot, guild):
 		return False
 
 	guild_conf = await bot.get_guild_config(guild.id)
-	print(guild_conf)
+	print(guild_conf["cogs"])
 	if cog_name in guild_conf["cogs"]:
 		print("yes")
 		return True
