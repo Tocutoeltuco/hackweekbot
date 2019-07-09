@@ -9,15 +9,22 @@ def set_cog_name(name):
 	cog_name = name
 
 async def cog_check(bot, guild):
+	print("checking", bot, guild, cog_name)
+
 	if cog_name is None:
+		print("raised")
 		raise EnvironmentError("objects.utils.cog_name was never set. Set it with objects.utils.set_cog_name")
 
 	if guild is None:
+		print("guild, none")
 		return False
 
 	guild_conf = await bot.get_guild_config(guild.id)
+	print(guild_conf)
 	if cog_name in guild_conf["cogs"]:
+		print("yes")
 		return True
+	print("no")
 	return False
 
 def command_check():
