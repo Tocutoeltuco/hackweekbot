@@ -405,14 +405,16 @@ class Client(commands.Bot):
 
 			if (guild_id == self.config["testserver"]) and ("cogs.testcog" not in config["cogs"]):
 				config["cogs"].append("cogs.testcog")
-			print(config)
+			print(1, guild_id, config)
 
 			return config
 
 		if guild_id == self.config["testserver"]:
 			config = self.default_config
 			config["cogs"].append("cogs.testcog")
+			print(2, guild_id, config)
 			return config
+		print(3, guild_id, config)
 		return self.default_config
 
 	async def _get_guild_permissions(self, guild_id, db=None):
