@@ -414,7 +414,7 @@ class Client(commands.Bot):
 			config["cogs"].append("cogs.testcog")
 			print(2, guild_id, config)
 			return config
-		print(3, guild_id, config)
+		print(3, guild_id, self.default_config)
 		return self.default_config
 
 	async def _get_guild_permissions(self, guild_id, db=None):
