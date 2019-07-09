@@ -337,18 +337,18 @@ class Client(commands.Bot):
 
 		has_role = False
 		for role in member.roles:
-			if role.id in permissions["granted"]["big_roles"]:
+			if role.id in permissions[permission]["granted"]["big_roles"]:
 				return True
 
 			if not has_role:
-				if role.id in permissions["granted"]["roles"]:
+				if role.id in permissions[permission]["granted"]["roles"]:
 					has_role = True
 
-				elif role.id in permissions["not_granted"]["roles"]:
+				elif role.id in permissions[permission]["not_granted"]["roles"]:
 					return False
 
-		if not (has_role and channel.id in permissions["granted"]["channels"]):
-			return (channel.id not in permissions["not_granted"]["channels"]) and permissions["default"]
+		if not (has_role and channel.id in permissions[permission]["granted"]["channels"]):
+			return (channel.id not in permissions[permission]["not_granted"]["channels"]) and permissions[permission]["default"]
 
 	async def has_permissions(self, member, channel, permission):
 		return self._has_permissions(await self.get_guild_config(member.guild.id), member, channel, permission)
