@@ -2,46 +2,26 @@ import re
 from discord.ext import commands
 import discord
 
-cog_name = None
-
-def set_cog_name(name):
-	global cog_name
-	cog_name = name
-
-async def cog_check(bot, guild):
-	print("checking", bot, guild, cog_name)
-
-	if cog_name is None:
-		print("raised")
-		raise EnvironmentError("objects.utils.cog_name was never set. Set it with objects.utils.set_cog_name")
-
+async def cog_check(bot, guild, cog_name):
 	if guild is None:
-		print("guild, none")
 		return False
 
 	guild_conf = await bot.get_guild_config(guild.id)
-	print(guild_conf["cogs"])
 	if cog_name in guild_conf["cogs"]:
-		print("yes")
 		return True
-	print("no")
 	return False
 
-def command_check():
+def command_check(cog_name):
 	"""A checker to tell whether the command can execute in this guild or not."""
 	async def predicate(ctx):
-		result = await cog_check(ctx.bot, ctx.guild)
-		print("command check", result)
-		return result
+		return await cog_check(ctx.bot, ctx.guild, cog_name)
 
 	return commands.check(predicate)
 
 def permission(permission):
 	"""A checker that tells if the given permission is granted in the given context."""
 	async def predicate(ctx):
-		result = await ctx.bot.has_permissions(ctx.author, ctx.channel, permission)
-		print("permission check", result)
-		return result
+		return await ctx.bot.has_permissions(ctx.author, ctx.channel, permission)
 
 	return commands.check(predicate)
 

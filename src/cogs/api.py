@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup as BS
 import aiohttp
 import discord
 
-utils.set_cog_name("cogs.api")
-
 class ApiCog(commands.Cog, name="Api Cog"):
 	"""Cog where all call to APIs are made."""
 

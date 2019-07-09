@@ -4,8 +4,6 @@ import random
 import time
 from discord.ext import commands
 
-utils.set_cog_name("cogs.messagesedit")
-
 class MessagesEditCog(commands.Cog, name="Messages Cog"):
 	def __init__(self, bot):
 		self.bot = bot

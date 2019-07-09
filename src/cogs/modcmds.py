@@ -4,8 +4,6 @@ import time
 from discord.ext import commands
 from discord import Embed
 
-utils.set_cog_name("cogs.modcmds")
-
 class ModerationCmds(commands.Cog, name="Moderation Commands"):
 	def __init__(self, bot):
 		self.bot = bot
@@ -20,7 +18,7 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 
 	@commands.Cog.listener()
 	async def on_member_join(self, member):
-		if await utils.cog_check(self.bot, member.guild):
+		if await utils.cog_check(self.bot, member.guild, "cogs.modcmds"):
 			sanction = await self.bot.db.query("SELECT * FROM `sanctions` WHERE `guild`=%s AND `sanctioned`=%s AND `type`=%s", str(member.guild.id), str(member.id), "mute", fetch="one")
 			if sanction is None:
 				return

@@ -3,8 +3,6 @@ import objects.utils as utils
 import discord
 from discord.ext import commands
 
-utils.set_cog_name("cogs.search")
-
 class SearchCog(commands.Cog, name="Search Cog"):
 	"""Searches through roles and users."""
 	def __init__(self, bot):

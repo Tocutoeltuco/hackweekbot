@@ -13,8 +13,6 @@ import datetime
 import urllib.parse
 from discord.ext import commands
 
-utils.set_cog_name("cogs.simplecmds")
-
 class SimpleCmds(commands.Cog, name="Simple Commands"):
 	def __init__(self, bot, session):
 		self.bot = bot
@@ -347,7 +345,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 :small_blue_diamond: **`[argument]`** -> required; **`<argument>`** -> optional
 :small_blue_diamond: Arguments: **`{arguments or "no arguments"}`**
 :small_blue_diamond: Example: **`{prefix}{command}{example}`**"""
-			
+
 			else:
 				embed.colour = 0xff5555
 				embed.description = f"The command **`{prefix}{command}`** was not found :("
@@ -552,10 +550,10 @@ print("Hello world!")\\`\\`\\`++
 
 				if type(result["Warnings"]) == str:
 					embeds.append(discord.Embed(title="Script warnings", description=result["Warnings"], colour=0x999900))
-				
+
 				if type(result["Result"]) == str:
 					embeds.append(discord.Embed(title="Script result", description=result["Result"], colour=0x0099ff))
-				
+
 				embeds.append(discord.Embed(title="Script stats", description=result["Stats"] + ", language: " + lang, colour=0x0099ff))
 
 				for embed in embeds:

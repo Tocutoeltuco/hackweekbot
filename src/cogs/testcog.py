@@ -2,8 +2,6 @@ import objects.utils as utils
 import discord
 from discord.ext import commands
 
-utils.set_cog_name("cogs.testcog")
-
 class TestCog(commands.Cog, name="Testing Cog"):
 	def __init__(self, bot):
 		self.bot = bot

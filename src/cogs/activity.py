@@ -4,8 +4,6 @@ import random
 import time
 from discord.ext import commands
 
-utils.set_cog_name("cogs.activity")
-
 class ActivityCog(commands.Cog, name="Activity Cog"):
 	def __init__(self, bot):
 		self.bot = bot
@@ -65,7 +63,7 @@ class ActivityCog(commands.Cog, name="Activity Cog"):
 		if not isinstance(msg.channel, discord.TextChannel): # private messages lol
 			return
 
-		if not await utils.cog_check(self.bot, msg.guild):
+		if not await utils.cog_check(self.bot, msg.guild, "cogs.activity"):
 			return
 
 		ctx = await self.bot.get_context(msg)

@@ -1,8 +1,6 @@
 import objects.utils as utils
 from discord.ext import commands
 
-utils.set_cog_name("cogs.memberlogs")
-
 class MemberLogs(commands.Cog, name="Member Logs"):
 	def __init__(self, bot):
 		self.bot = bot

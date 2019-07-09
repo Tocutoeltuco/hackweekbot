@@ -3,8 +3,6 @@ import discord
 import re
 from discord.ext import commands
 
-utils.set_cog_name("cogs.statistics")
-
 class Statistics(commands.Cog, name="Statistics"):
 	def __init__(self, bot):
 		self.bot = bot
@@ -66,44 +64,44 @@ class Statistics(commands.Cog, name="Statistics"):
 	@commands.Cog.listener()
 	async def on_ready(self):
 		for guild in self.bot.guilds:
-			if await utils.cog_check(self.bot, guild):
+			if await utils.cog_check(self.bot, guild, "cogs.statistics"):
 				await self.update_guild(guild)
 
 	@commands.Cog.listener()
 	async def on_guild_join(self, guild):
-		if await utils.cog_check(self.bot, guild):
+		if await utils.cog_check(self.bot, guild, "cogs.statistics"):
 			await self.update_guild(guild)
 
 	@commands.Cog.listener()
 	async def on_member_join(self, member):
-		if await utils.cog_check(self.bot, member.guild):
+		if await utils.cog_check(self.bot, member.guild, "cogs.statistics"):
 			await self.update_guild(member.guild, update="member")
 			await self.update_guild(member.guild, update="bot")
 
 	@commands.Cog.listener()
 	async def on_member_remove(self, member):
-		if await utils.cog_check(self.bot, member.guild):
+		if await utils.cog_check(self.bot, member.guild, "cogs.statistics"):
 			await self.update_guild(member.guild, update="member")
 			await self.update_guild(member.guild, update="bot")
 
 	@commands.Cog.listener()
 	async def on_guild_channel_create(self, channel):
-		if await utils.cog_check(self.bot, channel.guild):
+		if await utils.cog_check(self.bot, channel.guild, "cogs.statistics"):
 			await self.update_guild(channel.guild)
 
 	@commands.Cog.listener()
 	async def on_guild_channel_delete(self, channel):
-		if await utils.cog_check(self.bot, channel.guild):
+		if await utils.cog_check(self.bot, channel.guild, "cogs.statistics"):
 			await self.update_guild(channel.guild, update="channel")
 
 	@commands.Cog.listener()
 	async def on_guild_role_create(self, role):
-		if await utils.cog_check(self.bot, role.guild):
+		if await utils.cog_check(self.bot, role.guild, "cogs.statistics"):
 			await self.update_guild(role.guild, update="role")
 
 	@commands.Cog.listener()
 	async def on_guild_role_delete(self, role):
-		if await utils.cog_check(self.bot, role.guild):
+		if await utils.cog_check(self.bot, role.guild, "cogs.statistics"):
 			await self.update_guild(role.guild, update="role")
 
 def setup(bot):
