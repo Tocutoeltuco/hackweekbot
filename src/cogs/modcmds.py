@@ -98,7 +98,7 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 		await ctx.channel.delete_messages(msglist)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.modcmds")
 	@utils.permission("access_ban_cmd")
 	@commands.bot_has_permissions(ban_members=True, send_messages=True)
 	async def ban(self, ctx, member: commands.MemberConverter, hours: utils.double, reason=None):
@@ -150,7 +150,7 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 			pass
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.modcmds")
 	@utils.permission("access_kick_cmd")
 	@commands.bot_has_permissions(kick_members=True, send_messages=True)
 	async def kick(self, ctx, member: commands.MemberConverter, reason=None):
