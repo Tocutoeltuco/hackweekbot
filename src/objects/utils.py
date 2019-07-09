@@ -23,14 +23,24 @@ async def cog_check(bot, guild):
 def command_check():
 	"""A checker to tell whether the command can execute in this guild or not."""
 	async def predicate(ctx):
-		return await cog_check(ctx.bot, ctx.guild)
+		try:
+			return await cog_check(ctx.bot, ctx.guild)
+		except Exception as e:
+			import traceback
+			traceback.print_exc()
+			raise e
 
 	return commands.check(predicate)
 
 def permission(permission):
 	"""A checker that tells if the given permission is granted in the given context."""
 	async def predicate(ctx):
-		return await ctx.bot.has_permissions(ctx.author, ctx.channel, permission)
+		try:
+			return await ctx.bot.has_permissions(ctx.author, ctx.channel, permission)
+		except Exception as e:
+			import traceback
+			traceback.print_exc()
+			raise e
 
 	return commands.check(predicate)
 
@@ -51,7 +61,7 @@ def time(arg):
 		time_quantity += int(hours[1]) * 3600
 	if days is not None:
 		time_quantity += int(days[1]) * 86400
-	
+
 	return time_quantity
 
 def integer(arg):
