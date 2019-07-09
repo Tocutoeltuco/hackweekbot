@@ -23,24 +23,18 @@ async def cog_check(bot, guild):
 def command_check():
 	"""A checker to tell whether the command can execute in this guild or not."""
 	async def predicate(ctx):
-		try:
-			return await cog_check(ctx.bot, ctx.guild)
-		except Exception as e:
-			import traceback
-			traceback.print_exc()
-			raise e
+		result = await cog_check(ctx.bot, ctx.guild)
+		print("command check", result)
+		return result
 
 	return commands.check(predicate)
 
 def permission(permission):
 	"""A checker that tells if the given permission is granted in the given context."""
 	async def predicate(ctx):
-		try:
-			return await ctx.bot.has_permissions(ctx.author, ctx.channel, permission)
-		except Exception as e:
-			import traceback
-			traceback.print_exc()
-			raise e
+		result = await ctx.bot.has_permissions(ctx.author, ctx.channel, permission)
+		print("permission check", result)
+		return result
 
 	return commands.check(predicate)
 
