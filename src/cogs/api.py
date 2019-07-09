@@ -12,7 +12,7 @@ class ApiCog(commands.Cog, name="Api Cog"):
 		self.session = session
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.api")
 	@utils.permission("access_urban_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def urban(self, ctx, *args):
@@ -53,7 +53,7 @@ class ApiCog(commands.Cog, name="Api Cog"):
 		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.api")
 	@utils.permission("access_dict_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def dict(self, ctx, *args):
@@ -87,7 +87,7 @@ class ApiCog(commands.Cog, name="Api Cog"):
 		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.api")
 	@utils.permission("access_anime_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def anime(self, ctx, *args):
@@ -141,7 +141,7 @@ class ApiCog(commands.Cog, name="Api Cog"):
 		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.api")
 	@utils.permission("access_country_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def country(self, ctx, *args):

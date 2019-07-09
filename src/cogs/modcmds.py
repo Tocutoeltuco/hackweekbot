@@ -72,7 +72,7 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 				pass
 
 	@commands.command(name="del")
-	@utils.command_check()
+	@utils.command_check("cogs.modcmds")
 	@utils.permission("access_del_cmd")
 	@commands.bot_has_permissions(manage_messages=True, send_messages=True)
 	async def delete(self, ctx, msg1: utils.integer, msg2: utils.integer):
@@ -182,7 +182,7 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 			pass
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.modcmds")
 	@utils.permission("access_mute_cmd")
 	@commands.bot_has_permissions(manage_roles=True, send_messages=True)
 	async def mute(self, ctx, member: commands.MemberConverter, hours: utils.double, reason=None):
@@ -243,7 +243,7 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 			await ctx.send(embed=embed)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.modcmds")
 	@utils.permission("access_sancinfo_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def sancinfo(self, ctx, member: commands.MemberConverter):
@@ -271,7 +271,7 @@ class ModerationCmds(commands.Cog, name="Moderation Commands"):
 			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.modcmds")
 	@utils.permission("access_remsanc_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def remsanc(self, ctx, sanc_id: utils.integer):

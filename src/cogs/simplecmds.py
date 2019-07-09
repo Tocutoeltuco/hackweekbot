@@ -110,7 +110,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 			await self.bot.db.query("DELETE FROM `custom_run_later` WHERE `discord_id`=%s", id, fetch=None)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_giveaway_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def giveaway(self, ctx, when: utils.time, *, message: str):
@@ -150,7 +150,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 		)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_giveaway_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def stopgiveaway(self, ctx):
@@ -180,7 +180,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_remind_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def remind(self, ctx, when: utils.time, *, message: str):
@@ -208,7 +208,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_remind_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def stopreminder(self, ctx):
@@ -222,7 +222,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_help_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def help(self, ctx, command: str=None):
@@ -354,7 +354,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_quote_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def quote(self, ctx, info: str):
@@ -418,7 +418,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_color_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def color(self, ctx, color: str):
@@ -453,7 +453,7 @@ class SimpleCmds(commands.Cog, name="Simple Commands"):
 		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_exec_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def exec(self, ctx, *, args: str):
@@ -566,7 +566,7 @@ print("Hello world!")\\`\\`\\`++
 			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_meme_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def meme(self, ctx):
@@ -591,7 +591,7 @@ print("Hello world!")\\`\\`\\`++
 		await ctx.send(embed=embed)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.simplecmds")
 	@utils.permission("access_translate_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def translate(self, ctx, settings: str, *, text: str):

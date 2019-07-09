@@ -18,7 +18,7 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		return f'<:{name}:{self.emojis[name]}>'
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.search")
 	@utils.permission("access_list_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def list(self, ctx, *role):
@@ -52,7 +52,7 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.search")
 	@utils.permission("access_searchin_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def searchin(self, ctx, *args):
@@ -92,7 +92,7 @@ class SearchCog(commands.Cog, name="Search Cog"):
 		self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.search")
 	@utils.permission("access_discrim_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def discrim(self, ctx):

@@ -97,7 +97,7 @@ class ActivityCog(commands.Cog, name="Activity Cog"):
 				await self.bot.db.query("INSERT INTO `user_levels` (`guild_id`, `user_id`, `total`, `this_week`) VALUES (%s, %s, %s, %s)", str(msg.guild.id), str(msg.author.id), howmany, howmany, fetch=None)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.activity")
 	@utils.permission("access_top_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def top(self, ctx, week: bool=False):
@@ -132,7 +132,7 @@ class ActivityCog(commands.Cog, name="Activity Cog"):
 			self.bot.set_answer(ctx.message.id, message)
 
 	@commands.command()
-	@utils.command_check()
+	@utils.command_check("cogs.activity")
 	@utils.permission("access_level_cmd")
 	@commands.bot_has_permissions(send_messages=True)
 	async def level(self, ctx, member: commands.MemberConverter=None):
